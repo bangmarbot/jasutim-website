@@ -15,8 +15,8 @@ export function SiteShell({children}: {children: React.ReactNode}) {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <header className="sticky top-0 z-40 border-b bg-background/90 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+      <header className="sticky top-0 z-40 border-b border-emerald-100/80 bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
           <Link href={`/${locale}`} className="flex items-center gap-3 font-semibold">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
               <Recycle className="h-5 w-5" />
@@ -36,22 +36,22 @@ export function SiteShell({children}: {children: React.ReactNode}) {
           </nav>
 
           <div className="hidden items-center gap-3 md:flex">
-            <Link href={`/${switchTo}`} className={cn(buttonVariants({variant: "outline", size: "sm"}))}>
+            <Link href={`/${switchTo}`} className={cn(buttonVariants({variant: "outline", size: "sm"}), "rounded-full")}>
               <Languages className="mr-2 h-4 w-4" />
               {switchTo.toUpperCase()}
             </Link>
-            <Link href={`/${locale}/kontak`} className={cn(buttonVariants({size: "sm"}))}>
+            <Link href={`/${locale}/kontak`} className={cn(buttonVariants({size: "sm"}), "rounded-full px-5")}>
               {locale === "id" ? "Hubungi Kami" : "Contact Us"}
             </Link>
           </div>
 
           <Sheet>
             <SheetTrigger>
-              <Button variant="outline" size="icon" className="md:hidden">
+              <Button variant="outline" size="icon" className="rounded-full md:hidden">
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[300px]">
+            <SheetContent side="right" className="w-[300px] sm:max-w-sm">
               <div className="mt-8 flex flex-col gap-4">
                 {items.map((item) => (
                   <Link key={item.href} href={`/${locale}${item.href === "/" ? "" : item.href}`} className="text-base font-medium">
@@ -60,6 +60,9 @@ export function SiteShell({children}: {children: React.ReactNode}) {
                 ))}
                 <Link href={`/${switchTo}`} className="pt-2 text-sm text-muted-foreground">
                   Switch to {switchTo.toUpperCase()}
+                </Link>
+                <Link href={`/${locale}/kontak`} className={cn(buttonVariants({size: "sm"}), "mt-2 justify-center rounded-full")}>
+                  {locale === "id" ? "Hubungi Kami" : "Contact Us"}
                 </Link>
               </div>
             </SheetContent>

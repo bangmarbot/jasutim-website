@@ -23,13 +23,14 @@ export default function HomePage({params}: {params: {locale: Locale}}) {
   return (
     <main>
       <section className="relative overflow-hidden bg-gradient-to-b from-emerald-50 via-white to-white">
-        <div className="mx-auto grid max-w-7xl gap-10 px-4 py-20 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:px-8 lg:py-24">
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-[radial-gradient(circle_at_top_left,_rgba(82,183,136,0.18),_transparent_55%)]" />
+        <div className="mx-auto grid max-w-7xl gap-8 px-4 pb-16 pt-14 sm:px-6 sm:pb-20 sm:pt-16 lg:grid-cols-[1.08fr_0.92fr] lg:gap-12 lg:px-8 lg:pb-24 lg:pt-20">
           <Reveal>
-            <div className="space-y-8">
+            <div className="space-y-7">
             <Badge variant="secondary" className="rounded-full px-4 py-1 text-xs font-medium">{t.hero.eyebrow}</Badge>
-            <div className="space-y-5">
-              <h1 className="max-w-3xl text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">{t.hero.title}</h1>
-              <p className="max-w-2xl text-lg leading-8 text-muted-foreground">{t.hero.description}</p>
+            <div className="space-y-4">
+              <h1 className="max-w-3xl text-4xl font-semibold tracking-tight text-balance sm:text-5xl lg:text-6xl">{t.hero.title}</h1>
+              <p className="max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8">{t.hero.description}</p>
             </div>
             <div className="flex flex-wrap gap-3">
               <Link href={`/${locale}/kontak`} className={cn(buttonVariants({size: "lg"}), "rounded-full px-6")}>
@@ -41,7 +42,7 @@ export default function HomePage({params}: {params: {locale: Locale}}) {
             </div>
             <div className="grid gap-4 sm:grid-cols-3">
               {t.hero.stats.map((stat) => (
-                <Card key={stat.label} className="rounded-3xl border-emerald-100 shadow-sm">
+                <Card key={stat.label} className="rounded-3xl border-emerald-100/80 bg-white/80 shadow-sm backdrop-blur">
                   <CardContent className="p-6">
                     <div className="text-3xl font-semibold text-emerald-700">{stat.value}</div>
                     <div className="mt-2 text-sm text-muted-foreground">{stat.label}</div>
@@ -53,11 +54,11 @@ export default function HomePage({params}: {params: {locale: Locale}}) {
           </Reveal>
 
           <Reveal delay={0.1}>
-          <Card className="rounded-[2rem] border-0 bg-emerald-900 text-white shadow-2xl shadow-emerald-200">
-            <CardContent className="flex h-full flex-col justify-between p-8">
+          <Card className="rounded-[2rem] border-0 bg-emerald-900 text-white shadow-2xl shadow-emerald-200/70 lg:mt-4">
+            <CardContent className="flex h-full flex-col justify-between p-6 sm:p-8">
               <div>
                 <div className="mb-6 inline-flex rounded-full bg-white/10 px-4 py-2 text-sm">JASUTIM Eco-Candle Initiative</div>
-                <h2 className="text-3xl font-semibold">33× value multiplication from used cooking oil.</h2>
+                <h2 className="text-2xl font-semibold sm:text-3xl">33× value multiplication from used cooking oil.</h2>
                 <p className="mt-4 text-sm leading-7 text-emerald-50/85">
                   Based on the latest pitch deck, JASUTIM is preparing a product-scale initiative that turns used cooking oil into premium eco-candles while creating jobs for women and reducing household pollution.
                 </p>
@@ -78,7 +79,7 @@ export default function HomePage({params}: {params: {locale: Locale}}) {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
         <div className="max-w-3xl">
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-700">01</p>
           <h2 className="mt-3 text-3xl font-semibold tracking-tight">{t.problem.title}</h2>
@@ -99,7 +100,7 @@ export default function HomePage({params}: {params: {locale: Locale}}) {
       </section>
 
       <section className="bg-muted/40">
-        <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-700">02</p>
           <h2 className="mt-3 text-3xl font-semibold tracking-tight">{t.impact.title}</h2>
           <div className="mt-10 grid gap-6 lg:grid-cols-3">
@@ -115,7 +116,7 @@ export default function HomePage({params}: {params: {locale: Locale}}) {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-700">03</p>
         <h2 className="mt-3 text-3xl font-semibold tracking-tight">{t.programs.title}</h2>
         <div className="mt-10 grid gap-6 lg:grid-cols-3">
@@ -132,7 +133,7 @@ export default function HomePage({params}: {params: {locale: Locale}}) {
       </section>
 
       <section className="bg-emerald-950 text-white">
-        <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-300">04</p>
           <h2 className="mt-3 text-3xl font-semibold tracking-tight">{t.timeline.title}</h2>
           <div className="mt-10 grid gap-6 lg:grid-cols-4">
@@ -146,7 +147,7 @@ export default function HomePage({params}: {params: {locale: Locale}}) {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
         <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-700">05</p>
@@ -175,7 +176,7 @@ export default function HomePage({params}: {params: {locale: Locale}}) {
       </section>
 
       <section className="bg-muted/40">
-        <div className="mx-auto grid max-w-7xl gap-10 px-4 py-20 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
+        <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 sm:py-20 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-700">06</p>
             <h2 className="mt-3 text-3xl font-semibold tracking-tight">{t.contact.title}</h2>

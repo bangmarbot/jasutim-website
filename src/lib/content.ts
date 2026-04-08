@@ -5,12 +5,12 @@ export const defaultLocale: Locale = "id";
 export const siteConfig = {
   name: "Yayasan JASUTIM",
   shortName: "JASUTIM",
-  domain: process.env.NEXT_PUBLIC_SITE_URL || "https://jasutim-website.vercel.app",
+  domain: process.env.NEXT_PUBLIC_SITE_URL || "https://jasutim.aidia.uk",
   email: "yayasanjasutim@gmail.com",
   phone: "+62 813-1006-9661",
   location: "Jatirahayu, Bekasi, Indonesia",
   socials: {
-    instagram: "https://instagram.com",
+    instagram: "https://www.instagram.com/jasutim/",
     whatsapp: "https://wa.me/6281310069661",
   },
 };
