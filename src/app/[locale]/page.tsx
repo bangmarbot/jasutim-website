@@ -6,6 +6,7 @@ import {cn} from "@/lib/utils";
 import {Badge} from "@/components/ui/badge";
 import {Separator} from "@/components/ui/separator";
 import {ContactForm} from "@/components/contact-form";
+import {Reveal} from "@/components/reveal";
 import {content, siteConfig, type Locale} from "@/lib/content";
 import {getMetadata} from "@/lib/seo";
 
@@ -23,7 +24,8 @@ export default function HomePage({params}: {params: {locale: Locale}}) {
     <main>
       <section className="relative overflow-hidden bg-gradient-to-b from-emerald-50 via-white to-white">
         <div className="mx-auto grid max-w-7xl gap-10 px-4 py-20 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:px-8 lg:py-24">
-          <div className="space-y-8">
+          <Reveal>
+            <div className="space-y-8">
             <Badge variant="secondary" className="rounded-full px-4 py-1 text-xs font-medium">{t.hero.eyebrow}</Badge>
             <div className="space-y-5">
               <h1 className="max-w-3xl text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">{t.hero.title}</h1>
@@ -48,7 +50,9 @@ export default function HomePage({params}: {params: {locale: Locale}}) {
               ))}
             </div>
           </div>
+          </Reveal>
 
+          <Reveal delay={0.1}>
           <Card className="rounded-[2rem] border-0 bg-emerald-900 text-white shadow-2xl shadow-emerald-200">
             <CardContent className="flex h-full flex-col justify-between p-8">
               <div>
@@ -70,6 +74,7 @@ export default function HomePage({params}: {params: {locale: Locale}}) {
               </div>
             </CardContent>
           </Card>
+          </Reveal>
         </div>
       </section>
 
