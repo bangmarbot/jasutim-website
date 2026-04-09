@@ -3,7 +3,6 @@ import {ArrowRight, Droplets, HandHeart, Leaf, Sparkles} from "lucide-react";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {buttonVariants} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
-import {Badge} from "@/components/ui/badge";
 import {Separator} from "@/components/ui/separator";
 import {ContactForm} from "@/components/contact-form";
 import {Reveal} from "@/components/reveal";
@@ -27,7 +26,9 @@ export default function HomePage({params}: {params: {locale: Locale}}) {
         <div className="mx-auto grid max-w-7xl gap-6 px-4 pb-16 pt-14 sm:px-6 sm:gap-8 sm:pb-20 sm:pt-16 lg:grid-cols-[1.08fr_0.92fr] lg:gap-12 lg:px-8 lg:pb-24 lg:pt-20">
           <Reveal>
             <div className="space-y-6 order-2 lg:order-none">
-            <Badge variant="secondary" className="inline-flex max-w-full whitespace-normal rounded-full px-4 py-1 text-[11px] font-medium leading-5 sm:text-xs">{t.hero.eyebrow}</Badge>
+            <div className="max-w-full overflow-hidden rounded-2xl bg-emerald-100/70 px-4 py-2 text-[11px] font-medium leading-5 text-emerald-900 sm:inline-flex sm:w-fit sm:rounded-full sm:px-4 sm:py-1 sm:text-xs">
+              <span className="break-words">{t.hero.eyebrow}</span>
+            </div>
             <div className="space-y-4">
               <h1 className="max-w-3xl text-4xl font-semibold tracking-tight text-balance sm:text-5xl lg:text-6xl">{t.hero.title}</h1>
               <p className="max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8">{t.hero.description}</p>
