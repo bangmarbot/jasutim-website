@@ -51,17 +51,17 @@ export function SiteShell({children}: {children: React.ReactNode}) {
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] sm:max-w-sm">
-              <div className="mt-8 flex flex-col gap-4">
+            <SheetContent side="right" className="w-[300px] px-0 sm:max-w-sm">
+              <div className="mt-8 flex flex-col gap-2 px-6">
                 {items.map((item) => (
-                  <Link key={item.href} href={`/${locale}${item.href === "/" ? "" : item.href}`} className="text-base font-medium">
+                  <Link key={item.href} href={`/${locale}${item.href === "/" ? "" : item.href}`} className="rounded-xl px-3 py-2 text-base font-medium transition hover:bg-emerald-50">
                     {item.label}
                   </Link>
                 ))}
-                <Link href={`/${switchTo}`} className="pt-2 text-sm text-muted-foreground">
+                <Link href={`/${switchTo}`} className="px-3 pt-3 text-sm text-muted-foreground">
                   Switch to {switchTo.toUpperCase()}
                 </Link>
-                <Link href={`/${locale}/kontak`} className={cn(buttonVariants({size: "sm"}), "mt-2 justify-center rounded-full")}>
+                <Link href={`/${locale}/kontak`} className={cn(buttonVariants({size: "sm"}), "mt-3 justify-center rounded-full")}>
                   {locale === "id" ? "Hubungi Kami" : "Contact Us"}
                 </Link>
               </div>
