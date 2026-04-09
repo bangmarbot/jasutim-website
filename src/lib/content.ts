@@ -7,11 +7,11 @@ export const siteConfig = {
   shortName: "JASUTIM",
   domain: process.env.NEXT_PUBLIC_SITE_URL || "https://jasutim.aidia.uk",
   email: "yayasanjasutim@gmail.com",
-  phone: "+62 813-1006-9661",
+  phone: "+62 838-7707-6054",
   location: "Jatirahayu, Bekasi, Indonesia",
   socials: {
     instagram: "https://www.instagram.com/jasutim/",
-    whatsapp: "https://wa.me/6281310069661",
+    whatsapp: "https://wa.me/6283877076054",
   },
 };
 
