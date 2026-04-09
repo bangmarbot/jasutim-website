@@ -24,10 +24,10 @@ export default function HomePage({params}: {params: {locale: Locale}}) {
     <main>
       <section className="relative overflow-hidden bg-gradient-to-b from-emerald-50 via-white to-white">
         <div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-[radial-gradient(circle_at_top_left,_rgba(82,183,136,0.18),_transparent_55%)]" />
-        <div className="mx-auto grid max-w-7xl gap-8 px-4 pb-16 pt-14 sm:px-6 sm:pb-20 sm:pt-16 lg:grid-cols-[1.08fr_0.92fr] lg:gap-12 lg:px-8 lg:pb-24 lg:pt-20">
+        <div className="mx-auto grid max-w-7xl gap-6 px-4 pb-16 pt-14 sm:px-6 sm:gap-8 sm:pb-20 sm:pt-16 lg:grid-cols-[1.08fr_0.92fr] lg:gap-12 lg:px-8 lg:pb-24 lg:pt-20">
           <Reveal>
-            <div className="space-y-7">
-            <Badge variant="secondary" className="rounded-full px-4 py-1 text-xs font-medium">{t.hero.eyebrow}</Badge>
+            <div className="space-y-6 order-2 lg:order-none">
+            <Badge variant="secondary" className="inline-flex max-w-full whitespace-normal rounded-full px-4 py-1 text-[11px] font-medium leading-5 sm:text-xs">{t.hero.eyebrow}</Badge>
             <div className="space-y-4">
               <h1 className="max-w-3xl text-4xl font-semibold tracking-tight text-balance sm:text-5xl lg:text-6xl">{t.hero.title}</h1>
               <p className="max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8">{t.hero.description}</p>
@@ -54,23 +54,23 @@ export default function HomePage({params}: {params: {locale: Locale}}) {
           </Reveal>
 
           <Reveal delay={0.1}>
-          <Card className="rounded-[2rem] border-0 bg-emerald-900 text-white shadow-2xl shadow-emerald-200/70 lg:mt-4">
+          <Card className="order-1 rounded-[2rem] border-0 bg-emerald-900 text-white shadow-2xl shadow-emerald-200/70 lg:order-none lg:mt-4">
             <CardContent className="flex h-full flex-col justify-between p-6 sm:p-8">
               <div>
-                <div className="mb-6 inline-flex rounded-full bg-white/10 px-4 py-2 text-sm">JASUTIM Eco-Candle Initiative</div>
-                <h2 className="text-2xl font-semibold sm:text-3xl">33× value multiplication from used cooking oil.</h2>
+                <div className="mb-5 inline-flex max-w-full whitespace-normal rounded-full bg-white/10 px-4 py-2 text-xs leading-5 text-white/90 sm:text-sm">{t.hero.spotlight.eyebrow}</div>
+                <h2 className="text-2xl font-semibold leading-tight sm:text-3xl">{t.hero.spotlight.title}</h2>
                 <p className="mt-4 text-sm leading-7 text-emerald-50/85">
-                  Based on the latest pitch deck, JASUTIM is preparing a product-scale initiative that turns used cooking oil into premium eco-candles while creating jobs for women and reducing household pollution.
+                  {t.hero.spotlight.description}
                 </p>
               </div>
               <div className="mt-8 grid gap-4 sm:grid-cols-2">
                 <div className="rounded-3xl bg-white/10 p-5">
-                  <div className="text-sm text-emerald-50/80">Projected year-1 revenue</div>
-                  <div className="mt-2 text-2xl font-semibold">Rp 140.3M</div>
+                  <div className="text-sm text-emerald-50/80">{t.hero.spotlight.metricOneLabel}</div>
+                  <div className="mt-2 text-2xl font-semibold">{t.hero.spotlight.metricOneValue}</div>
                 </div>
                 <div className="rounded-3xl bg-white/10 p-5">
-                  <div className="text-sm text-emerald-50/80">Potential jobs created</div>
-                  <div className="mt-2 text-2xl font-semibold">3–5 women</div>
+                  <div className="text-sm text-emerald-50/80">{t.hero.spotlight.metricTwoLabel}</div>
+                  <div className="mt-2 text-2xl font-semibold">{t.hero.spotlight.metricTwoValue}</div>
                 </div>
               </div>
             </CardContent>

@@ -45,7 +45,7 @@ export const content = {
       secondary: "Lihat Dampak Kami",
     },
     hero: {
-      eyebrow: "Circular economy · Community empowerment · Environmental education",
+      eyebrow: "Ekonomi sirkular · Pemberdayaan komunitas · Edukasi lingkungan",
       title: "Dari sampah menjadi dampak yang nyata untuk komunitas.",
       description:
         "Yayasan JASUTIM adalah yayasan berbasis komunitas di Bekasi yang mengubah pengelolaan sampah menjadi gerakan bersama — menghadirkan lingkungan yang lebih bersih, nilai ekonomi untuk warga, dan ruang tumbuh bagi perempuan serta keluarga.",
@@ -54,6 +54,16 @@ export const content = {
         { value: "3 ton/bulan", label: "volume sampah terkelola" },
         { value: "4 tahun", label: "jejak pengabdian komunitas" },
       ],
+      spotlight: {
+        eyebrow: "Inisiatif Eco-Candle JASUTIM",
+        title: "Nilai 33× dari minyak jelantah menjadi produk ramah lingkungan.",
+        description:
+          "Berdasarkan pitch deck terbaru, JASUTIM sedang menyiapkan inisiatif produk yang mengubah minyak jelantah menjadi eco-candle premium sambil membuka peluang kerja bagi perempuan dan mengurangi polusi rumah tangga.",
+        metricOneLabel: "Proyeksi pendapatan tahun pertama",
+        metricOneValue: "Rp 140,3 juta",
+        metricTwoLabel: "Potensi lapangan kerja",
+        metricTwoValue: "3–5 perempuan",
+      },
     },
     problem: {
       title: "Kenapa isu ini penting?",
@@ -136,6 +146,16 @@ export const content = {
         { value: "3 tons/month", label: "waste managed" },
         { value: "4 years", label: "of community work" },
       ],
+      spotlight: {
+        eyebrow: "JASUTIM Eco-Candle Initiative",
+        title: "33× value multiplication from used cooking oil.",
+        description:
+          "Based on the latest pitch deck, JASUTIM is preparing a product-scale initiative that turns used cooking oil into premium eco-candles while creating jobs for women and reducing household pollution.",
+        metricOneLabel: "Projected year-1 revenue",
+        metricOneValue: "Rp 140.3M",
+        metricTwoLabel: "Potential jobs created",
+        metricTwoValue: "3–5 women",
+      },
     },
     problem: {
       title: "Why does this matter?",
