@@ -82,6 +82,15 @@ export const content = {
         { title: "Edukasi Berkelanjutan", body: "Mengubah isu lingkungan menjadi percakapan praktis yang dekat dengan keseharian keluarga dan anak-anak." },
       ],
     },
+    dampak: {
+      title: "Dampak yang kami ciptakan",
+      intro: "Pengelolaan sampah dari sumber menghasilkan dampak lingkungan dan sosial yang nyata dan terukur.",
+      stats: [
+        { value: "≈40 ton/tahun", label: "sampah daur ulang dikelola", note: "Setara dengan volume sampah yang tidak lagi berakhir di TPA Sumur Batu, Bekasi." },
+        { value: "3 bank sampah", label: "baru dibina hingga operasional dalam satu tahun terakhir", note: "Memperluas jejaring pengelolaan sampah berbasis komunitas." },
+        { value: "200+ keluarga", label: "dididik memilah sampah langsung dari rumah", note: "Menumbuhkan kebiasaan memilah sebagai perubahan perilaku jangka panjang." },
+      ],
+    },
     programs: {
       title: "Program utama JASUTIM",
       items: [
@@ -210,6 +219,15 @@ export const content = {
         { title: "Community Waste Bank", body: "Encouraging sorting habits, waste savings, and transparent weighing records for residents." },
         { title: "Women Empowerment", body: "Creating productive skills and livelihood opportunities rooted in circular economy." },
         { title: "Sustained Education", body: "Making environmental issues practical and relevant for families and children." },
+      ],
+    },
+    dampak: {
+      title: "The impact we create",
+      intro: "Managing waste at the source produces tangible, measurable environmental and social impact.",
+      stats: [
+        { value: "≈40 tons/year", label: "of recyclable waste managed", note: "Equivalent to the volume of waste no longer ending up at the Sumur Batu landfill in Bekasi." },
+        { value: "3 waste banks", label: "newly established and made operational in the past year", note: "Expanding the community-based waste management network." },
+        { value: "200+ families", label: "trained to sort waste directly from home", note: "Building sorting habits as long-term behavior change." },
       ],
     },
     programs: {
