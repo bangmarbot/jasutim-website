@@ -75,6 +75,7 @@ export function SiteShell({children}: {children: React.ReactNode}) {
           <div>
             <div className="font-semibold">{siteConfig.name}</div>
             <div className="mt-1 text-muted-foreground">{siteConfig.location}</div>
+            <div className="mt-1 text-xs text-muted-foreground">{siteConfig.legalShort}</div>
           </div>
           <div className="text-muted-foreground">© 2026 {siteConfig.shortName}. All rights reserved.</div>
         </div>

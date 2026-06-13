@@ -9,6 +9,7 @@ export const siteConfig = {
   email: "yayasanjasutim@gmail.com",
   phone: "+62 838-7707-6054",
   location: "Jatirahayu, Bekasi, Indonesia",
+  legalShort: "Badan hukum — SK Kemenkumham RI No. AHU-0030240.AH.01.04.Tahun 2025",
   socials: {
     instagram: "https://www.instagram.com/jasutim/",
     whatsapp: "https://wa.me/6283877076054",
@@ -55,14 +56,14 @@ export const content = {
         { value: "4 tahun", label: "jejak pengabdian komunitas" },
       ],
       spotlight: {
-        eyebrow: "Inisiatif Eco-Candle JASUTIM",
-        title: "Nilai 33× dari minyak jelantah menjadi produk ramah lingkungan.",
+        eyebrow: "Inisiatif Inovasi 2026",
+        title: "Mengubah minyak jelantah menjadi eco-candle yang bernilai.",
         description:
-          "Berdasarkan pitch deck terbaru, JASUTIM sedang menyiapkan inisiatif produk yang mengubah minyak jelantah menjadi eco-candle premium sambil membuka peluang kerja bagi perempuan dan mengurangi polusi rumah tangga.",
-        metricOneLabel: "Proyeksi pendapatan tahun pertama",
-        metricOneValue: "Rp 140,3 juta",
-        metricTwoLabel: "Potensi lapangan kerja",
-        metricTwoValue: "3–5 perempuan",
+          "JASUTIM mengembangkan inisiatif yang mengolah minyak jelantah rumah tangga menjadi eco-candle — mengurangi polusi, membuka peluang kerja bagi perempuan, dan menambah nilai ekonomi dari limbah.",
+        metricOneLabel: "Nilai tambah dari jelantah",
+        metricOneValue: "hingga 33×",
+        metricTwoLabel: "Peluang kerja perempuan",
+        metricTwoValue: "3–5 orang",
       },
     },
     problem: {
@@ -103,8 +104,46 @@ export const content = {
       items: [
         { year: "2022", text: "Bank sampah komunitas mulai berjalan di lingkungan warga." },
         { year: "2022–2025", text: "Menjangkau 200+ rumah tangga dan mengelola sekitar 3 ton sampah per bulan." },
-        { year: "Des 2025", text: "JASUTIM resmi diformalkan sebagai yayasan." },
-        { year: "2026", text: "Masuk fase scale-up melalui produk turunan, kemitraan, dan penguatan brand." },
+        { year: "Des 2025", text: "JASUTIM resmi diformalkan sebagai yayasan berbadan hukum." },
+        { year: "2026", text: "Memasuki fase scale-up: produk turunan, kemitraan strategis, dan penguatan kelembagaan." },
+      ],
+    },
+    uvp: {
+      title: "Yang membuat JASUTIM berbeda",
+      tagline: "Kami menggerakkan ton, bukan sekadar gerakan.",
+      points: [
+        { title: "Substansi nyata", text: "3 ton sampah setiap bulan benar-benar terkelola — bukan sekadar kampanye." },
+        { title: "Institusi matang", text: "Yayasan berbadan hukum dengan roadmap (RPJM) lima tahun yang terukur." },
+        { title: "Hilirisasi bertahap", text: "Dari pilah–timbang menuju produk turunan bernilai hingga inovasi teknologi sirkular." },
+      ],
+    },
+    theoryOfChange: {
+      title: "Bagaimana kami menciptakan perubahan",
+      steps: [
+        { label: "Tantangan", text: "Sampah rumah tangga dan minyak jelantah berakhir di saluran air atau TPA; warga belum melihat sampah sebagai aset; belum ada model pengelolaan dari sumber yang terukur dan bisa direplikasi." },
+        { label: "Intervensi", text: "Bank sampah komunitas (pilah–timbang–catat), edukasi perubahan perilaku, hilirisasi selektif seperti eco-candle dari jelantah, serta pendampingan replikasi ke ranting binaan." },
+        { label: "Hasil langsung", text: "Rumah tangga memilah dan menabung sampah, produk turunan bernilai jual, kader serta ranting terlatih, dan SOP yang terstandar." },
+        { label: "Dampak 2030", text: "Menjadi tulang punggung ekosistem ekonomi sirkular berbasis komunitas — lingkungan lebih bersih, ekonomi warga tumbuh, dan model yang dapat direplikasi hingga skala nasional." },
+      ],
+    },
+    org: {
+      title: "Struktur organisasi",
+      intro: "Susunan organ resmi sesuai pengesahan Kementerian Hukum Republik Indonesia.",
+      members: [
+        { name: "Muhamad Muslih", role: "Ketua Pembina", organ: "Pembina" },
+        { name: "Dian Rivian Kustia, S.E.", role: "Ketua Pengurus", organ: "Pengurus" },
+        { name: "A. David Louhenapessy", role: "Sekretaris", organ: "Pengurus" },
+        { name: "Agah Januar Pribadi", role: "Bendahara", organ: "Pengurus" },
+        { name: "Rezha Octaryanto, S.H., M.H.", role: "Ketua Pengawas", organ: "Pengawas" },
+      ],
+    },
+    legal: {
+      title: "Legalitas & badan hukum",
+      intro: "Yayasan Jalandra Suwara Timu adalah badan hukum resmi yang disahkan oleh Kementerian Hukum Republik Indonesia.",
+      items: [
+        "SK Menteri Hukum RI No. AHU-0030240.AH.01.04.Tahun 2025 (5 Desember 2025)",
+        "Akta Pendirian No. 02 — Notaris Annisa Nurul Hikmah, S.H., M.Kn.",
+        "Berkedudukan di Kota Bekasi, Jawa Barat",
       ],
     },
     collaboration: {
@@ -147,14 +186,14 @@ export const content = {
         { value: "4 years", label: "of community work" },
       ],
       spotlight: {
-        eyebrow: "JASUTIM Eco-Candle Initiative",
-        title: "33× value multiplication from used cooking oil.",
+        eyebrow: "2026 Innovation Initiative",
+        title: "Turning used cooking oil into valuable eco-candles.",
         description:
-          "Based on the latest pitch deck, JASUTIM is preparing a product-scale initiative that turns used cooking oil into premium eco-candles while creating jobs for women and reducing household pollution.",
-        metricOneLabel: "Projected year-1 revenue",
-        metricOneValue: "Rp 140.3M",
-        metricTwoLabel: "Potential jobs created",
-        metricTwoValue: "3–5 women",
+          "JASUTIM is developing an initiative that turns household used cooking oil into eco-candles—reducing pollution, creating jobs for women, and adding economic value to waste.",
+        metricOneLabel: "Value added from used oil",
+        metricOneValue: "up to 33×",
+        metricTwoLabel: "Jobs for women",
+        metricTwoValue: "3–5 people",
       },
     },
     problem: {
@@ -195,8 +234,46 @@ export const content = {
       items: [
         { year: "2022", text: "The community waste bank started operating locally." },
         { year: "2022–2025", text: "Reached 200+ households and managed around 3 tons of waste per month." },
-        { year: "Dec 2025", text: "JASUTIM was formally established as a foundation." },
-        { year: "2026", text: "Entering a scale-up phase through product innovation, partnerships, and brand strengthening." },
+        { year: "Dec 2025", text: "JASUTIM was formally established as a legal foundation." },
+        { year: "2026", text: "Entering a scale-up phase: value-added products, strategic partnerships, and institutional strengthening." },
+      ],
+    },
+    uvp: {
+      title: "What makes JASUTIM different",
+      tagline: "We move tons, not just sentiment.",
+      points: [
+        { title: "Real substance", text: "3 tons of waste genuinely managed every month — not just a campaign." },
+        { title: "Mature institution", text: "A legally established foundation with a measurable five-year roadmap (RPJM)." },
+        { title: "Staged downstreaming", text: "From sorting and weighing to value-added products and circular technology innovation." },
+      ],
+    },
+    theoryOfChange: {
+      title: "How we create change",
+      steps: [
+        { label: "Challenge", text: "Household waste and used cooking oil end up in waterways or landfills; residents don’t yet see waste as an asset; there is no measurable, replicable model to manage waste at the source." },
+        { label: "Intervention", text: "A community waste bank (sort–weigh–record), behavior-change education, selective downstreaming such as eco-candles from used cooking oil, and replication support for affiliated units." },
+        { label: "Direct results", text: "Households sort and save waste, value-added products emerge, cadres and units are trained, and SOPs become standardized." },
+        { label: "2030 impact", text: "Becoming the backbone of a community-based circular economy — cleaner neighborhoods, growing local economies, and a model replicable at national scale." },
+      ],
+    },
+    org: {
+      title: "Organizational structure",
+      intro: "Official governing organs as ratified by the Ministry of Law of the Republic of Indonesia.",
+      members: [
+        { name: "Muhamad Muslih", role: "Chair of Trustees", organ: "Board of Trustees" },
+        { name: "Dian Rivian Kustia, S.E.", role: "Chair of Management", organ: "Management" },
+        { name: "A. David Louhenapessy", role: "Secretary", organ: "Management" },
+        { name: "Agah Januar Pribadi", role: "Treasurer", organ: "Management" },
+        { name: "Rezha Octaryanto, S.H., M.H.", role: "Chair of Supervisors", organ: "Supervisory Board" },
+      ],
+    },
+    legal: {
+      title: "Legal status",
+      intro: "Yayasan Jalandra Suwara Timu is a legally established foundation, ratified by the Ministry of Law of the Republic of Indonesia.",
+      items: [
+        "Ministerial Decree No. AHU-0030240.AH.01.04.Tahun 2025 (5 December 2025)",
+        "Deed of Establishment No. 02 — Notary Annisa Nurul Hikmah, S.H., M.Kn.",
+        "Domiciled in Bekasi City, West Java",
       ],
     },
     collaboration: {
