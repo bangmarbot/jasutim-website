@@ -5,7 +5,7 @@ export const defaultLocale: Locale = "id";
 export const siteConfig = {
   name: "Yayasan JASUTIM",
   shortName: "JASUTIM",
-  domain: process.env.NEXT_PUBLIC_SITE_URL || "https://jasutim.aidia.uk",
+  domain: process.env.NEXT_PUBLIC_SITE_URL || "https://www.jasutim.org",
   email: "yayasanjasutim@gmail.com",
   phone: "+62 838-7707-6054",
   location: "Jatirahayu, Bekasi, Indonesia",
