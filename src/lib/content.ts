@@ -6,9 +6,9 @@ export const siteConfig = {
   name: "Yayasan JASUTIM",
   shortName: "JASUTIM",
   domain: process.env.NEXT_PUBLIC_SITE_URL || "https://www.jasutim.org",
-  email: "yayasanjasutim@gmail.com",
+  email: "info@jasutim.org",
   phone: "+62 838-7707-6054",
-  location: "Jatirahayu, Bekasi, Indonesia",
+  location: "Pondok Melati, Bekasi, Indonesia",
   legalShort: "Badan hukum — SK Kemenkumham RI No. AHU-0030240.AH.01.04.Tahun 2025",
   socials: {
     instagram: "https://www.instagram.com/jasutim/",
