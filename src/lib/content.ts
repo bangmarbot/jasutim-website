@@ -126,6 +126,17 @@ export const content = {
         { title: "Hilirisasi bertahap", text: "Dari pilah–timbang menuju produk turunan bernilai hingga inovasi teknologi sirkular." },
       ],
     },
+    feature: {
+      eyebrow: "Kemitraan & skala",
+      title: "Bekerja bersama pemerintah dan warga.",
+      text: "Dari penimbangan harian sampai pengangkutan bersama Dinas Lingkungan Hidup Kota Bekasi — JASUTIM menggerakkan rantai sampah yang nyata, bukan sekadar kampanye.",
+    },
+    anchor: {
+      label: "Gerakan komunitas",
+      title: "Dijalankan oleh warga, untuk warga.",
+      text: "JASUTIM tumbuh dari satu bank sampah komunitas yang dikelola warga Pondok Melati — kini menjadi yayasan berbadan hukum yang menggerakkan ekonomi sirkular dari akar rumput.",
+      link: "Kenal lebih dekat",
+    },
     theoryOfChange: {
       title: "Bagaimana kami menciptakan perubahan",
       steps: [
@@ -264,6 +275,17 @@ export const content = {
         { title: "Mature institution", text: "A legally established foundation with a measurable five-year roadmap (RPJM)." },
         { title: "Staged downstreaming", text: "From sorting and weighing to value-added products and circular technology innovation." },
       ],
+    },
+    feature: {
+      eyebrow: "Partnership & scale",
+      title: "Working together with government and residents.",
+      text: "From daily weighing to joint collection with the Bekasi City Environmental Agency — JASUTIM moves a real waste chain, not just a campaign.",
+    },
+    anchor: {
+      label: "A community movement",
+      title: "Run by residents, for residents.",
+      text: "JASUTIM grew from a single community-run waste bank in Pondok Melati — now a legally established foundation moving the circular economy from the grassroots.",
+      link: "Get to know us",
     },
     theoryOfChange: {
       title: "How we create change",
