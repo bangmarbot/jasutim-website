@@ -12,7 +12,7 @@ export default function HomePage({params}: {params: {locale: Locale}}) {
   const id = locale === "id";
 
   const alt = {
-    hero: id ? "Warga menimbang sampah di Bank Sampah JASUTIM" : "A resident weighing waste at Bank Sampah JASUTIM",
+    hero: id ? "Sampah daur ulang terpilah, siap diangkut bersama Dinas Lingkungan Hidup Kota Bekasi" : "Sorted recyclable waste, ready for collection with the Bekasi City Environmental Agency",
     feature: id ? "Pengangkutan sampah bersama Dinas Lingkungan Hidup Kota Bekasi" : "Joint waste collection with the Bekasi City Environmental Agency",
     anchor: id ? "Kegiatan pemilahan sampah di bank sampah komunitas JASUTIM" : "Waste sorting activity at the JASUTIM community waste bank",
   };
@@ -38,7 +38,7 @@ export default function HomePage({params}: {params: {locale: Locale}}) {
             </div>
           </div>
           <div className="relative order-1 min-h-[300px] lg:order-none lg:min-h-[640px]">
-            <img src="/images/weighing.jpg" alt={alt.hero} className="absolute inset-0 h-full w-full object-cover" loading="eager" />
+            <img src="/images/bottles.jpg" alt={alt.hero} className="absolute inset-0 h-full w-full object-cover" loading="eager" />
           </div>
         </div>
       </section>
