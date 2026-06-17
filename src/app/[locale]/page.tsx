@@ -13,7 +13,7 @@ export default function HomePage({params}: {params: {locale: Locale}}) {
 
   const alt = {
     hero: id ? "Sampah daur ulang terpilah, siap diangkut bersama Dinas Lingkungan Hidup Kota Bekasi" : "Sorted recyclable waste, ready for collection with the Bekasi City Environmental Agency",
-    feature: id ? "Pengangkutan sampah bersama Dinas Lingkungan Hidup Kota Bekasi" : "Joint waste collection with the Bekasi City Environmental Agency",
+    feature: id ? "Tim pengurus dan warga JASUTIM di depan Bank Sampah JASUTIM" : "JASUTIM team and residents in front of Bank Sampah JASUTIM",
     anchor: id ? "Kegiatan pemilahan sampah di bank sampah komunitas JASUTIM" : "Waste sorting activity at the JASUTIM community waste bank",
   };
 
@@ -83,7 +83,7 @@ export default function HomePage({params}: {params: {locale: Locale}}) {
       {/* PHOTO FEATURE */}
       <section className="grid grid-cols-1 lg:grid-cols-2">
         <div className="relative order-2 min-h-[300px] lg:order-none lg:min-h-[560px]">
-          <img src="/images/pickup.jpg" alt={alt.feature} className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
+          <img src="/images/feature.jpg" alt={alt.feature} className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
         </div>
         <div className="order-1 flex flex-col justify-center bg-foreground px-4 py-14 text-background sm:px-6 lg:order-none lg:px-14 lg:py-24">
           <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-primary">{t.feature.eyebrow}</p>
