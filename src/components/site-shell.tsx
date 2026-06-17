@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import {useLocale} from "next-intl";
-import {Menu, Recycle, Languages} from "lucide-react";
+import {Menu, Languages} from "lucide-react";
 import {Button, buttonVariants} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
 import {Sheet, SheetContent, SheetTrigger} from "@/components/ui/sheet";
@@ -18,10 +18,8 @@ export function SiteShell({children}: {children: React.ReactNode}) {
       <header className="sticky top-0 z-40 border-b border-emerald-100/80 bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
           <Link href={`/${locale}`} className="flex items-center gap-3 font-semibold">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
-              <Recycle className="h-5 w-5" />
-            </div>
-            <div>
+            <img src="/images/logo.png" alt="Logo JASUTIM" className="h-11 w-auto" />
+            <div className="leading-tight">
               <div>{siteConfig.shortName}</div>
               <div className="text-xs font-normal text-muted-foreground">Yayasan Jalandra Suwara Timu</div>
             </div>
@@ -73,6 +71,7 @@ export function SiteShell({children}: {children: React.ReactNode}) {
       <footer className="border-t bg-muted/30">
         <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-10 text-sm sm:px-6 lg:px-8 md:flex-row md:items-center md:justify-between">
           <div>
+            <img src="/images/logo.png" alt="Logo JASUTIM" className="mb-3 h-12 w-auto" />
             <div className="font-semibold">{siteConfig.name}</div>
             <div className="mt-1 text-muted-foreground">{siteConfig.location}</div>
             <div className="mt-1 text-xs text-muted-foreground">{siteConfig.legalShort}</div>
