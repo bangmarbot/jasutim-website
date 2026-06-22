@@ -158,7 +158,7 @@ export const content = {
       title: "Struktur organisasi",
       intro: "Susunan organ resmi sesuai pengesahan Kementerian Hukum Republik Indonesia.",
       members: [
-        { name: "Muhamad Muslih", role: "Ketua Pembina", organ: "Pembina" },
+        { name: "Muhamad Muslih", role: "Ketua Pembina", organ: "Pembina", link: "https://muslih.jasutim.org" },
         { name: "Dian Rivian Kustia, S.E.", role: "Ketua Pengurus", organ: "Pengurus" },
         { name: "A. David Louhenapessy", role: "Sekretaris", organ: "Pengurus" },
         { name: "Agah Januar Pribadi", role: "Bendahara", organ: "Pengurus" },
@@ -308,7 +308,7 @@ export const content = {
       title: "Organizational structure",
       intro: "Official governing organs as ratified by the Ministry of Law of the Republic of Indonesia.",
       members: [
-        { name: "Muhamad Muslih", role: "Chair of Trustees", organ: "Board of Trustees" },
+        { name: "Muhamad Muslih", role: "Chair of Trustees", organ: "Board of Trustees", link: "https://muslih.jasutim.org" },
         { name: "Dian Rivian Kustia, S.E.", role: "Chair of Management", organ: "Management" },
         { name: "A. David Louhenapessy", role: "Secretary", organ: "Management" },
         { name: "Agah Januar Pribadi", role: "Treasurer", organ: "Management" },

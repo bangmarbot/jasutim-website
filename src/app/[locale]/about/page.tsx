@@ -43,13 +43,34 @@ export default function AboutPage({params}: {params: {locale: Locale}}) {
         <h2 className="text-2xl font-semibold tracking-tight">{t.org.title}</h2>
         <p className="mt-2 text-muted-foreground">{t.org.intro}</p>
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {t.org.members.map((member) => (
-            <div key={member.name} className="rounded-3xl border p-6">
-              <div className="text-xs font-semibold uppercase tracking-wide text-emerald-700">{member.organ}</div>
-              <div className="mt-2 font-semibold">{member.name}</div>
-              <div className="mt-1 text-sm text-muted-foreground">{member.role}</div>
-            </div>
-          ))}
+          {t.org.members.map((member) => {
+            const link = 'link' in member ? member.link : undefined;
+            const body = (
+              <>
+                <div className="text-xs font-semibold uppercase tracking-wide text-emerald-700">{member.organ}</div>
+                <div className="mt-2 font-semibold">
+                  {member.name}
+                  {link && <span aria-hidden className="ml-1 text-emerald-700">↗</span>}
+                </div>
+                <div className="mt-1 text-sm text-muted-foreground">{member.role}</div>
+              </>
+            );
+            return link ? (
+              <a
+                key={member.name}
+                href={link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block rounded-3xl border p-6 transition hover:border-emerald-400 hover:shadow-sm"
+              >
+                {body}
+              </a>
+            ) : (
+              <div key={member.name} className="rounded-3xl border p-6">
+                {body}
+              </div>
+            );
+          })}
         </div>
       </section>
 
