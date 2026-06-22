@@ -1,15 +1,18 @@
 import type {MetadataRoute} from 'next';
-import {locales, siteConfig} from '@/lib/content';
+import {locales, siteConfig, localePath} from '@/lib/content';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const routes = ['', '/tentang', '/program', '/dampak', '/kontak'];
+  const routes = ['', '/about', '/programs', '/impact', '/contact'];
 
   return locales.flatMap((locale) =>
-    routes.map((route) => ({
-      url: `${siteConfig.domain}/${locale}${route}`,
-      lastModified: new Date(),
-      changeFrequency: route === '' ? 'weekly' : 'monthly',
-      priority: route === '' ? 1 : 0.7,
-    })),
+    routes.map((route) => {
+      const lp = localePath(locale, route);
+      return {
+        url: `${siteConfig.domain}${lp === '/' ? '' : lp}`,
+        lastModified: new Date(),
+        changeFrequency: route === '' ? ('weekly' as const) : ('monthly' as const),
+        priority: route === '' ? 1 : 0.7,
+      };
+    }),
   );
 }

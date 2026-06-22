@@ -1,5 +1,5 @@
 import Link from "next/link";
-import {content, siteConfig, type Locale} from "@/lib/content";
+import {content, siteConfig, localePath, type Locale} from "@/lib/content";
 import {getMetadata} from "@/lib/seo";
 
 export async function generateMetadata({params}: {params: {locale: Locale}}) {
@@ -30,10 +30,10 @@ export default function HomePage({params}: {params: {locale: Locale}}) {
             </h1>
             <p className="mt-6 max-w-xl text-base leading-7 text-muted-foreground sm:text-lg">{t.hero.description}</p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link href={`/${locale}/kontak`} className="bg-foreground px-6 py-3 text-xs font-bold uppercase tracking-[0.12em] text-background transition hover:bg-primary">
+              <Link href={localePath(locale, "/contact")} className="bg-foreground px-6 py-3 text-xs font-bold uppercase tracking-[0.12em] text-background transition hover:bg-primary">
                 {t.cta.primary}
               </Link>
-              <Link href={`/${locale}/dampak`} className="border border-foreground/25 px-6 py-3 text-xs font-bold uppercase tracking-[0.12em] transition hover:border-foreground">
+              <Link href={localePath(locale, "/impact")} className="border border-foreground/25 px-6 py-3 text-xs font-bold uppercase tracking-[0.12em] transition hover:border-foreground">
                 {t.cta.secondary}
               </Link>
             </div>
@@ -122,7 +122,7 @@ export default function HomePage({params}: {params: {locale: Locale}}) {
             <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-primary">{t.anchor.label}</p>
             <h2 className="mt-5 text-3xl font-bold tracking-tight sm:text-4xl">{t.anchor.title}</h2>
             <p className="mt-5 leading-7 text-muted-foreground">{t.anchor.text}</p>
-            <Link href={`/${locale}/tentang`} className="mt-7 inline-block border-b-2 border-primary pb-1 text-xs font-bold uppercase tracking-[0.12em] transition hover:border-foreground">
+            <Link href={localePath(locale, "/about")} className="mt-7 inline-block border-b-2 border-primary pb-1 text-xs font-bold uppercase tracking-[0.12em] transition hover:border-foreground">
               {t.anchor.link}
             </Link>
           </div>
@@ -138,7 +138,7 @@ export default function HomePage({params}: {params: {locale: Locale}}) {
               <p className="mt-4 max-w-2xl leading-7 text-primary-foreground/85">{t.contact.description}</p>
             </div>
             <div className="lg:text-right">
-              <Link href={`/${locale}/kontak`} className="inline-block bg-background px-7 py-3 text-xs font-bold uppercase tracking-[0.12em] text-foreground transition hover:bg-foreground hover:text-background">
+              <Link href={localePath(locale, "/contact")} className="inline-block bg-background px-7 py-3 text-xs font-bold uppercase tracking-[0.12em] text-foreground transition hover:bg-foreground hover:text-background">
                 {t.cta.primary}
               </Link>
               <p className="mt-4 text-sm text-primary-foreground/80">{siteConfig.email}</p>

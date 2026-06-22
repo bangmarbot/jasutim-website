@@ -2,7 +2,7 @@ import {content, type Locale} from '@/lib/content';
 import {getMetadata} from '@/lib/seo';
 
 export async function generateMetadata({params}: {params: {locale: Locale}}) {
-  return getMetadata(params.locale, '/tentang');
+  return getMetadata(params.locale, '/about');
 }
 
 export default function AboutPage({params}: {params: {locale: Locale}}) {

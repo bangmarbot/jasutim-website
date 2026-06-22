@@ -2,7 +2,7 @@ import {content, type Locale} from '@/lib/content';
 import {getMetadata} from '@/lib/seo';
 
 export async function generateMetadata({params}: {params: {locale: Locale}}) {
-  return getMetadata(params.locale, '/dampak');
+  return getMetadata(params.locale, '/impact');
 }
 
 export default function ImpactPage({params}: {params: {locale: Locale}}) {

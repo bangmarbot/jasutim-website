@@ -2,6 +2,14 @@ export const locales = ["id", "en"] as const;
 export type Locale = (typeof locales)[number];
 export const defaultLocale: Locale = "en";
 
+// Build a locale-aware href for `localePrefix: 'as-needed'`:
+// default locale (en) has no prefix (/about), others are prefixed (/id/about).
+export function localePath(locale: Locale, path: string): string {
+  const clean = path === "/" ? "" : path;
+  if (locale === defaultLocale) return clean || "/";
+  return `/${locale}${clean}`;
+}
+
 export const siteConfig = {
   name: "Yayasan JASUTIM",
   shortName: "JASUTIM",
@@ -19,17 +27,17 @@ export const siteConfig = {
 export const navigation = {
   id: [
     { label: "Beranda", href: "/" },
-    { label: "Tentang", href: "/tentang" },
-    { label: "Program", href: "/program" },
-    { label: "Dampak", href: "/dampak" },
-    { label: "Kontak", href: "/kontak" },
+    { label: "Tentang", href: "/about" },
+    { label: "Program", href: "/programs" },
+    { label: "Dampak", href: "/impact" },
+    { label: "Kontak", href: "/contact" },
   ],
   en: [
     { label: "Home", href: "/" },
-    { label: "About", href: "/tentang" },
-    { label: "Programs", href: "/program" },
-    { label: "Impact", href: "/dampak" },
-    { label: "Contact", href: "/kontak" },
+    { label: "About", href: "/about" },
+    { label: "Programs", href: "/programs" },
+    { label: "Impact", href: "/impact" },
+    { label: "Contact", href: "/contact" },
   ],
 } as const;
 

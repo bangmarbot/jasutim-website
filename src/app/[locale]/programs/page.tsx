@@ -2,7 +2,7 @@ import {content, type Locale} from '@/lib/content';
 import {getMetadata} from '@/lib/seo';
 
 export async function generateMetadata({params}: {params: {locale: Locale}}) {
-  return getMetadata(params.locale, '/program');
+  return getMetadata(params.locale, '/programs');
 }
 
 const images = ['/images/bank-sampah.jpg', '/images/eco-candle.jpg', '/images/pelatihan.jpg'];

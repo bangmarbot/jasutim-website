@@ -1,9 +1,13 @@
 import type {Metadata} from 'next';
-import {content, siteConfig, type Locale} from '@/lib/content';
+import {content, siteConfig, localePath, type Locale} from '@/lib/content';
 
 export function getMetadata(locale: Locale, path = ''): Metadata {
   const t = content[locale];
-  const url = `${siteConfig.domain}/${locale}${path}`;
+  const abs = (loc: Locale) => {
+    const lp = localePath(loc, path);
+    return `${siteConfig.domain}${lp === '/' ? '' : lp}`;
+  };
+  const url = abs(locale);
 
   return {
     metadataBase: new URL(siteConfig.domain),
@@ -12,8 +16,8 @@ export function getMetadata(locale: Locale, path = ''): Metadata {
     alternates: {
       canonical: url,
       languages: {
-        id: `${siteConfig.domain}/id${path}`,
-        en: `${siteConfig.domain}/en${path}`,
+        id: abs('id'),
+        en: abs('en'),
       },
     },
     openGraph: {
