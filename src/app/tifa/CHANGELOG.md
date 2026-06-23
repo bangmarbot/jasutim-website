@@ -121,3 +121,15 @@ Two minor copy edits after Muslih's review.
   "A community waste bank in Bekasi, Indonesia — turning everyday household trash into income and value."
 - **Closing slide.** English line "Thank you, Thailand!" → "**Thank you**". The Thai line
   **ขอบคุณครับ** stays (it means simply "thank you" — male polite — with no "Thailand").
+
+---
+
+## v1.4 — 2026-06-23 (commit pending)
+Two tweaks after review.
+
+**Changed**
+- **Removed the on-screen "Press N — notes" hint** (the `.notes-hint` element). The **N key
+  still toggles** the presenter-notes overlay — only the visible hint is gone.
+- **Reverted the hero photo to the original** (`team-with-muslih.jpg`, 960×1280). The v1.2
+  enhanced/sharpened version read as "AI-looking", so restored the natural original via
+  `git checkout 42dba54 -- …`. The hero scrim/treatment (v1.1) is unchanged.

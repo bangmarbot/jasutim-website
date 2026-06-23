@@ -744,10 +744,7 @@ export function TifaStory() {
         &rsaquo;
       </button>
 
-      {/* notes hint */}
-      <div className="notes-hint" data-no-advance>
-        Press N — notes
-      </div>
+      {/* notes hint removed (Muslih) — N key still toggles notes */}
 
       {/* presenter notes — shows CURRENT slide's notes */}
       {notesOpen && (
