@@ -35,7 +35,7 @@ Initial build. Live at https://www.jasutim.org/tifa.
 
 <!-- next entries (post-feedback iterations) go here, newest on top -->
 
-## v1.2 — 2026-06-23 (commit `__HASH__`)
+## v1.2 — 2026-06-23 (commit `0d8a56d`)
 Third revision round (3 changes).
 
 **Changed**
