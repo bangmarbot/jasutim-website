@@ -35,7 +35,7 @@ Initial build. Live at https://www.jasutim.org/tifa.
 
 <!-- next entries (post-feedback iterations) go here, newest on top -->
 
-## v1.1 — 2026-06-23 (commit `77fa480`)
+## v1.1 — 2026-06-23 (commit `2b3b413`)
 Revision round after Muslih's live review. **Biggest change: scroll → slide-deck.**
 
 **Changed**
