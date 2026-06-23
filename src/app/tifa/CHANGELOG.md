@@ -109,3 +109,15 @@ Revision round after Muslih's live review. **Biggest change: scroll → slide-de
 - Note: visual confirmation of glyph rendering on the projector is best double-checked in a real
   browser (no headless browser available in this build env) — the font subset and stack are wired
   correctly, so it should render.
+
+---
+
+## v1.3 — 2026-06-23 (commit pending)
+Two minor copy edits after Muslih's review.
+
+**Changed**
+- **Hero (Slide 1) byline.** "Muhamad Muslih — Chairman of Trustees, Yayasan JASUTIM" →
+  "**Muhamad Muslih — Trustee, JASUTIM Foundation**", plus a short JASUTIM descriptor line:
+  "A community waste bank in Bekasi, Indonesia — turning everyday household trash into income and value."
+- **Closing slide.** English line "Thank you, Thailand!" → "**Thank you**". The Thai line
+  **ขอบคุณครับ** stays (it means simply "thank you" — male polite — with no "Thailand").

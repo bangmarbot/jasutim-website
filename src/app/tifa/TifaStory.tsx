@@ -301,7 +301,10 @@ function buildSlides(reduce: boolean): ((step: number) => JSX.Element)[] {
             Waste management in Indonesia.
           </motion.p>
           <motion.p className="tiny" variants={riseItem}>
-            Muhamad Muslih — Chairman of Trustees, Yayasan JASUTIM
+            Muhamad Muslih — Trustee, JASUTIM Foundation
+          </motion.p>
+          <motion.p className="tiny" variants={riseItem}>
+            A community waste bank in Bekasi, Indonesia — turning everyday household trash into income and value.
           </motion.p>
         </M>
         <div className="tap-cue">
@@ -515,7 +518,7 @@ function buildSlides(reduce: boolean): ((step: number) => JSX.Element)[] {
             khòp khun kráp
           </motion.p>
           <motion.p className="thanks-en" variants={riseItem}>
-            Thank you, Thailand!
+            Thank you
           </motion.p>
           <motion.div className="closing-foot" variants={riseItem}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
