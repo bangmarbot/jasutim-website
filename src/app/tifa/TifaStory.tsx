@@ -249,9 +249,39 @@ function LoopDiagram({reduce}: {reduce: boolean}) {
 }
 
 /* ================================================================== */
-/* Slides — each is a full-screen render. They animate in on enter.   */
+/* Step-reveal: some slides reveal their lines one beat per advance.   */
+/* STEP_COUNTS[slideIndex] = number of beats. Slides not listed = 1    */
+/* (reveal-all-on-enter). The deck indicator tracks the SLIDE only.    */
 /* ================================================================== */
-function buildSlides(reduce: boolean): (() => JSX.Element)[] {
+const STEP_COUNTS: Record<number, number> = {
+  1: 5, // Slide 2 (Bantar Gebang) — 5 lines, one per advance
+  7: 3, // Slide 8 (What you can do) — 3 action items, one per advance
+};
+function stepCount(slideIdx: number) {
+  return STEP_COUNTS[slideIdx] ?? 1;
+}
+
+/* A single revealable beat: hidden until `show` is true, then fades up. */
+function Beat({show, reduce, children}: {show: boolean; reduce: boolean; children: React.ReactNode}) {
+  return (
+    <motion.div
+      initial={false}
+      animate={show ? {opacity: 1, y: 0} : {opacity: 0, y: reduce ? 0 : 24}}
+      transition={{duration: reduce ? 0 : 0.5, ease: EASE_OUT}}
+      style={{pointerEvents: show ? 'auto' : 'none'}}
+      aria-hidden={!show}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+/* ================================================================== */
+/* Slides — each is a full-screen render. They animate in on enter.   */
+/* `step` = current revealed-beat index (0-based) for step-reveal      */
+/* slides; ignored by reveal-all slides.                               */
+/* ================================================================== */
+function buildSlides(reduce: boolean): ((step: number) => JSX.Element)[] {
   const M = motion.div;
 
   return [
@@ -280,28 +310,28 @@ function buildSlides(reduce: boolean): (() => JSX.Element)[] {
       </div>
     ),
 
-    /* ---- 2 · THE PROBLEM ---- */
-    () => (
+    /* ---- 2 · THE PROBLEM (step-reveal, 5 beats) ---- */
+    (step: number) => (
       <div className="slide-photo">
         <img className="slide-bg" src="/images/tifa/problem-bantargebang.jpg" alt="Bantar Gebang landfill in Bekasi" />
         <div className="slide-scrim scrim-deep" />
-        <M className="slide-fg center" variants={stagger} initial="hidden" animate="show">
-          <motion.p className="line" variants={riseItem}>
-            This is Bantar Gebang.
-          </motion.p>
-          <motion.p className="line accent" variants={riseItem}>
-            Southeast Asia&rsquo;s largest landfill.
-          </motion.p>
-          <motion.p className="stat-band" variants={riseItem}>
-            &asymp;200 football fields wide · 50+ metres high
-          </motion.p>
-          <motion.p className="line small" variants={riseItem}>
-            And it sits in my city — Bekasi.
-          </motion.p>
-          <motion.p className="line small" variants={riseItem}>
-            Half of our home trash is food waste — almost no one recycles it.
-          </motion.p>
-        </M>
+        <div className="slide-fg center problem-steps">
+          <Beat show={step >= 0} reduce={reduce}>
+            <p className="line">This is Bantar Gebang.</p>
+          </Beat>
+          <Beat show={step >= 1} reduce={reduce}>
+            <p className="line accent">Southeast Asia&rsquo;s largest landfill.</p>
+          </Beat>
+          <Beat show={step >= 2} reduce={reduce}>
+            <p className="stat-band">&asymp;200 football fields wide · 50+ metres high</p>
+          </Beat>
+          <Beat show={step >= 3} reduce={reduce}>
+            <p className="line small">And it sits in my city — Bekasi.</p>
+          </Beat>
+          <Beat show={step >= 4} reduce={reduce}>
+            <p className="line small">Half of our home trash is food waste — almost no one recycles it.</p>
+          </Beat>
+        </div>
         <p className="credit">Photo: 22Kartika / Wikimedia Commons · CC BY-SA 3.0</p>
       </div>
     ),
@@ -429,34 +459,45 @@ function buildSlides(reduce: boolean): (() => JSX.Element)[] {
       </div>
     ),
 
-    /* ---- 8 · WHAT YOU CAN DO ---- */
-    () => (
+    /* ---- 8 · WHAT YOU CAN DO (step-reveal, 3 beats) ---- */
+    (step: number) => (
       <div className="slide-photo">
         <img className="slide-bg" src="/images/tifa/community-weighin.jpg" alt="Community weigh-in at the waste bank" />
         <div className="slide-scrim scrim-bottom" />
-        <M className="slide-fg bottom" variants={stagger} initial="hidden" animate="show">
-          <motion.h2 className="display md" variants={riseItem}>
+        <div className="slide-fg bottom">
+          <motion.h2
+            className="display md"
+            initial={reduce ? false : {opacity: 0, y: 24}}
+            animate={{opacity: 1, y: 0}}
+            transition={{duration: reduce ? 0 : 0.5, ease: EASE_OUT, delay: reduce ? 0 : 0.15}}
+          >
             What you can do — starting tomorrow
           </motion.h2>
-          <motion.div className="action-item" variants={riseItem}>
-            <span className="n">1</span>
-            <span className="t">
-              <b>Separate</b> your trash
-            </span>
-          </motion.div>
-          <motion.div className="action-item" variants={riseItem}>
-            <span className="n">2</span>
-            <span className="t">
-              <b>Refuse</b> single-use plastic
-            </span>
-          </motion.div>
-          <motion.div className="action-item" variants={riseItem}>
-            <span className="n">3</span>
-            <span className="t">
-              <b>Start small</b> — even a waste bank at school
-            </span>
-          </motion.div>
-        </M>
+          <Beat show={step >= 0} reduce={reduce}>
+            <div className="action-item">
+              <span className="n">1</span>
+              <span className="t">
+                <b>Separate</b> your trash
+              </span>
+            </div>
+          </Beat>
+          <Beat show={step >= 1} reduce={reduce}>
+            <div className="action-item">
+              <span className="n">2</span>
+              <span className="t">
+                <b>Refuse</b> single-use plastic
+              </span>
+            </div>
+          </Beat>
+          <Beat show={step >= 2} reduce={reduce}>
+            <div className="action-item">
+              <span className="n">3</span>
+              <span className="t">
+                <b>Start small</b> — even a waste bank at school
+              </span>
+            </div>
+          </Beat>
+        </div>
       </div>
     ),
 
@@ -492,26 +533,54 @@ function buildSlides(reduce: boolean): (() => JSX.Element)[] {
 /* ================================================================== */
 export function TifaStory() {
   const [current, setCurrent] = useState(0);
+  const [step, setStep] = useState(0); // revealed-beat index within the current slide
   const [dir, setDir] = useState(1); // 1 = forward, -1 = back
   const [notesOpen, setNotesOpen] = useState(false);
   const reduceMotion = useReducedMotion() ?? false;
 
-  const go = useCallback((next: number, direction: number) => {
-    setDir(direction);
-    setCurrent((c) => {
-      const target = Math.max(0, Math.min(SLIDE_COUNT - 1, next));
-      return target === c ? c : target;
-    });
-  }, []);
-
-  const advance = useCallback(() => go(currentRef.current + 1, 1), [go]);
-  const back = useCallback(() => go(currentRef.current - 1, -1), [go]);
-
-  // keep a live ref so handlers don't go stale
+  // keep live refs so handlers don't go stale
   const currentRef = useRef(current);
+  const stepRef = useRef(step);
   useEffect(() => {
     currentRef.current = current;
   }, [current]);
+  useEffect(() => {
+    stepRef.current = step;
+  }, [step]);
+
+  // jump straight to a slide (dots) — always resets fragments to beat 0
+  const go = useCallback((next: number, direction: number) => {
+    const target = Math.max(0, Math.min(SLIDE_COUNT - 1, next));
+    setDir(direction);
+    setStep(0);
+    setCurrent(target);
+  }, []);
+
+  // forward: reveal next beat if this slide has more, else next slide
+  const advance = useCallback(() => {
+    const c = currentRef.current;
+    const beats = stepCount(c);
+    if (stepRef.current < beats - 1) {
+      setStep((s) => s + 1);
+    } else if (c < SLIDE_COUNT - 1) {
+      setDir(1);
+      setStep(0);
+      setCurrent(c + 1);
+    }
+  }, []);
+
+  // back: step back through revealed beats, then to the previous slide
+  // (entering the previous slide shows it fully revealed at its last beat)
+  const back = useCallback(() => {
+    const c = currentRef.current;
+    if (stepRef.current > 0) {
+      setStep((s) => s - 1);
+    } else if (c > 0) {
+      setDir(-1);
+      setCurrent(c - 1);
+      setStep(stepCount(c - 1) - 1);
+    }
+  }, []);
 
   // ---- keyboard ----
   useEffect(() => {
@@ -621,7 +690,7 @@ export function TifaStory() {
           transition={{duration: reduceMotion ? 0.001 : 0.55, ease: EASE_DECK}}
           aria-label={NOTES[current].scene}
         >
-          {slides[current]()}
+          {slides[current](step)}
         </motion.section>
       </AnimatePresence>
 

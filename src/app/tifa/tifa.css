@@ -17,6 +17,10 @@
   --tifa-emerald-bright: hsl(150 55% 52%);
   --tifa-muted: hsl(160 14% 40%);
   --pad: clamp(28px, 6vw, 96px);
+  /* clears the fixed top-left logo (logo top + height + gap) */
+  --safe-top: clamp(78px, 12vh, 104px);
+  /* clears the bottom indicator / notes-hint UI */
+  --safe-bottom: clamp(64px, 11vh, 110px);
 }
 
 * {
@@ -127,6 +131,9 @@ body.tifa-body {
   display: flex;
   flex-direction: column;
   padding: var(--pad);
+  /* clear the fixed logo (top) and the bottom indicator UI */
+  padding-top: max(var(--pad), var(--safe-top));
+  padding-bottom: max(var(--pad), var(--safe-bottom));
   pointer-events: none;
 }
 .slide-fg.bottom {
@@ -136,6 +143,28 @@ body.tifa-body {
 .slide-fg.center {
   justify-content: center;
   align-items: flex-start;
+}
+/* Slide 2 step-reveal: keep all 5 big lines inside the viewport,
+   above the photo credit + indicator. Tighter rhythm + safe insets. */
+.problem-steps {
+  justify-content: center;
+  align-items: flex-start;
+  gap: clamp(2px, 0.6vh, 8px);
+  padding-bottom: max(var(--pad), calc(var(--safe-bottom) + 18px));
+}
+.problem-steps .line {
+  margin: 0;
+  line-height: 1.0;
+  font-size: clamp(2.2rem, 5.6vw, 4.4rem);
+}
+.problem-steps .line.small {
+  font-size: clamp(1.5rem, 3.6vw, 2.8rem);
+  line-height: 1.05;
+}
+.problem-steps .stat-band {
+  margin: 0;
+  font-size: clamp(1.8rem, 4.6vw, 3.4rem);
+  line-height: 1.04;
 }
 
 /* ============================================================
@@ -391,7 +420,10 @@ body.tifa-body {
   color: var(--tifa-ink);
   display: flex;
   align-items: center;
-  padding: clamp(40px, 6vh, 88px) var(--pad);
+  padding: var(--pad);
+  /* clear the fixed logo (top) + bottom indicator UI */
+  padding-top: max(clamp(40px, 6vh, 88px), var(--safe-top));
+  padding-bottom: max(clamp(40px, 6vh, 88px), var(--safe-bottom));
   overflow-y: auto;
 }
 .loop-wrap {

@@ -35,6 +35,42 @@ Initial build. Live at https://www.jasutim.org/tifa.
 
 <!-- next entries (post-feedback iterations) go here, newest on top -->
 
+## v1.2 — 2026-06-23 (commit `__HASH__`)
+Third revision round (3 changes).
+
+**Changed**
+- **A — Hero image.** Swapped `team-with-muslih.jpg` to the enhanced source
+  (1920×2560, denoised + sharpened + color), optimized to max 1600px / q82 and dropped in
+  place (existing hero scrim/treatment + `.focus-center` focal point unchanged).
+- **B — Step-reveal on Slides 2 & 8.** Slide 2 (Bantar Gebang) and Slide 8 (What you can do)
+  no longer show all lines at once. Each advance (Space/Enter/→/↓/click-tap or mobile swipe)
+  reveals the **next beat**; only after the last beat does the next advance move to the next
+  slide. Back (←/↑/Backspace) steps back through revealed beats, then to the previous slide
+  (entering a step slide from the back shows it fully revealed). Re-entering a step slide going
+  forward (or via a dot jump) resets to beat 1. Slide 2 beats: (1) "This is Bantar Gebang."
+  (2) "Southeast Asia's largest landfill." (3) the big emerald stat (4) "And it sits in my
+  city — Bekasi." (5) "Half of our home trash is food waste…". Slide 8 beats: Separate /
+  Refuse / Start small (header always shown). Implemented via a `step` state + `STEP_COUNTS`
+  map (slides not listed = reveal-all, unchanged) and a `<Beat>` fade-up wrapper; hidden beats
+  keep their layout box so nothing jumps as beats reveal. The "n / 9" indicator tracks the
+  **slide** number only (fragments don't increment it); notes overlay (N) still shows the
+  current slide's notes.
+- **B (fit) — Slide 2 no overflow.** Tightened Slide 2 line-height/spacing and nudged its font
+  down a touch (`.problem-steps`), plus added bottom safe-inset, so all 5 big lines sit within
+  the viewport above the photo credit + indicator — no overlap.
+- **C — Logo clearance.** Added top safe-inset (`--safe-top`) to `.slide-fg` and `.slide-loop`
+  so top-anchored content clears the fixed top-left logo (Slide 2's first line, Slide 6's
+  "in design" badge). Also added `--safe-bottom` so content clears the bottom indicator UI.
+
+**Verified**
+- `next build` passes; `/tifa` still 200 + noindex; site routes (`/`, `/about`, `/id`) intact.
+- Built artifacts confirm: enhanced hero served (512 KB), `--safe-top`/`--safe-bottom`/
+  `.problem-steps` in CSS, step-reveal beat strings + logic in the JS bundle.
+- Reduced-motion respected (beats appear without offset/animation).
+- Note: exact pixel fit / no-overlap on the projector is best double-checked in a real browser
+  (no headless browser in this build env); insets + tightened spacing are sized for the worst
+  case (all 5 Slide-2 beats visible).
+
 ## v1.1 — 2026-06-23 (commit `2b3b413`)
 Revision round after Muslih's live review. **Biggest change: scroll → slide-deck.**
 
