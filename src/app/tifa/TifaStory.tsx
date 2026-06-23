@@ -1,10 +1,17 @@
 'use client';
 
-import {useEffect, useRef, useState, useCallback} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
+import {AnimatePresence, motion, useReducedMotion, type Variants} from 'framer-motion';
 
-/* ------------------------------------------------------------------ */
-/* Presenter notes (press N) — talking points per scene from brief.   */
-/* ------------------------------------------------------------------ */
+// cubic-bezier easings as tuples (framer-motion v12 type wants tuples, not number[])
+const EASE_OUT = [0.22, 1, 0.36, 1] as const;
+const EASE_DECK = [0.4, 0, 0.2, 1] as const;
+const EASE_POP = [0.34, 1.56, 0.64, 1] as const;
+
+/* ================================================================== */
+/* Presenter notes (press N) — talking points per slide.             */
+/* Index matches the slides[] array below.                            */
+/* ================================================================== */
 const NOTES: {scene: string; text: string}[] = [
   {
     scene: '1 · Hello',
@@ -46,90 +53,60 @@ const NOTES: {scene: string; text: string}[] = [
     text:
       'So, starting tomorrow: separate your trash, say no to single-use plastic, and start small — even a waste bank in your school. You are youth for sustainable leadership — this is how it begins. In Indonesia we learned: trash is just treasure in the wrong place. Thank you, Thailand!',
   },
+  {
+    scene: '9 · Closing',
+    text:
+      'Trash is just treasure in the wrong place. ขอบคุณครับ — khòp khun kráp. Thank you, Thailand!',
+  },
 ];
 
+const SLIDE_COUNT = 9;
+
+/* ================================================================== */
+/* Motion helpers — content reveals fire on slide ENTER (the slide    */
+/* remounts via AnimatePresence key, so children animate fresh).      */
+/* ================================================================== */
+const stagger: Variants = {
+  hidden: {},
+  show: {transition: {staggerChildren: 0.14, delayChildren: 0.15}},
+};
+const riseItem: Variants = {
+  hidden: {opacity: 0, y: 34},
+  show: {opacity: 1, y: 0, transition: {duration: 0.55, ease: EASE_OUT}},
+};
+
 /* ------------------------------------------------------------------ */
-/* Step — fades/translates up when it enters the viewport.            */
+/* CountUp — animates from 0 to target when mounted.                  */
 /* ------------------------------------------------------------------ */
-function Step({
-  children,
-  className = '',
-  onFirstView,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  onFirstView?: () => void;
-}) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [seen, setSeen] = useState(false);
+function CountUp({to, prefix = '', suffix = '', reduce}: {to: number; prefix?: string; suffix?: string; reduce: boolean}) {
+  const [val, setVal] = useState(reduce ? to : 0);
 
   useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries) {
-          if (e.isIntersecting) {
-            el.classList.add('in');
-            if (!seen) {
-              setSeen(true);
-              onFirstView?.();
-            }
-          }
-        }
-      },
-      {threshold: 0.55, rootMargin: '0px 0px -12% 0px'}
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, [seen, onFirstView]);
+    if (reduce) {
+      setVal(to);
+      return;
+    }
+    const dur = 1500;
+    const t0 = performance.now();
+    let raf = 0;
+    const tick = (now: number) => {
+      const p = Math.min(1, (now - t0) / dur);
+      const eased = 1 - Math.pow(1 - p, 3);
+      setVal(Math.round(eased * to));
+      if (p < 1) raf = requestAnimationFrame(tick);
+    };
+    // small delay so the count-up reads after the slide settles
+    const start = setTimeout(() => {
+      raf = requestAnimationFrame(tick);
+    }, 350);
+    return () => {
+      clearTimeout(start);
+      cancelAnimationFrame(raf);
+    };
+  }, [to, reduce]);
 
   return (
-    <div ref={ref} className={`step ${className}`}>
-      {children}
-    </div>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/* CountUp — animates a number from 0 to target when triggered.       */
-/* ------------------------------------------------------------------ */
-function CountUp({to, prefix = '', suffix = ''}: {to: number; prefix?: string; suffix?: string}) {
-  const ref = useRef<HTMLSpanElement>(null);
-  const [val, setVal] = useState(0);
-  const started = useRef(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const io = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && !started.current) {
-          started.current = true;
-          const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-          if (reduce) {
-            setVal(to);
-            return;
-          }
-          const dur = 1400;
-          const t0 = performance.now();
-          const tick = (now: number) => {
-            const p = Math.min(1, (now - t0) / dur);
-            const eased = 1 - Math.pow(1 - p, 3);
-            setVal(Math.round(eased * to));
-            if (p < 1) requestAnimationFrame(tick);
-          };
-          requestAnimationFrame(tick);
-        }
-      },
-      {threshold: 0.6}
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, [to]);
-
-  return (
-    <span ref={ref}>
+    <span>
       {prefix}
       {val}
       {suffix}
@@ -138,7 +115,8 @@ function CountUp({to, prefix = '', suffix = ''}: {to: number; prefix?: string; s
 }
 
 /* ------------------------------------------------------------------ */
-/* Scene 6 loop diagram — 4 nodes light up in sequence on scroll.     */
+/* Scene 6 loop diagram — nodes pop in sequence, arcs draw in, and a  */
+/* token continuously travels around the loop. Animates on mount.     */
 /* ------------------------------------------------------------------ */
 const LOOP_NODES = [
   {t: 'Food scraps', s: 'kitchen & market waste'},
@@ -147,34 +125,7 @@ const LOOP_NODES = [
   {t: 'Eggs', s: 'food, back to the table'},
 ];
 
-function LoopDiagram() {
-  const [active, setActive] = useState(0);
-  const wrapRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const el = wrapRef.current;
-    if (!el) return;
-    const timers: ReturnType<typeof setTimeout>[] = [];
-    const io = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          // sequentially light up nodes
-          [1, 2, 3, 4].forEach((n, i) => {
-            timers.push(setTimeout(() => setActive(n), 350 * (i + 1)));
-          });
-          io.disconnect();
-        }
-      },
-      {threshold: 0.4}
-    );
-    io.observe(el);
-    return () => {
-      io.disconnect();
-      timers.forEach(clearTimeout);
-    };
-  }, []);
-
-  // 4 nodes positioned around a circle (cx 200 cy 200 r 130)
+function LoopDiagram({reduce}: {reduce: boolean}) {
   const cx = 200;
   const cy = 200;
   const r = 130;
@@ -184,7 +135,6 @@ function LoopDiagram() {
     {x: cx, y: cy + r}, // bottom
     {x: cx - r, y: cy}, // left
   ];
-  // arcs connecting consecutive nodes (quarter circles)
   const arcs = [
     `M ${pts[0].x} ${pts[0].y} A ${r} ${r} 0 0 1 ${pts[1].x} ${pts[1].y}`,
     `M ${pts[1].x} ${pts[1].y} A ${r} ${r} 0 0 1 ${pts[2].x} ${pts[2].y}`,
@@ -193,29 +143,72 @@ function LoopDiagram() {
   ];
   const labels = ['Food\nscraps', 'BSF\nlarvae', 'Chicken\nfeed', 'Eggs'];
 
+  // node reveal sequence; legend mirrors it.
+  const nodeDelay = (i: number) => 0.35 + i * 0.45;
+
   return (
-    <div className="loop-grid" ref={wrapRef}>
-      <svg className="loop-svg" viewBox="0 0 400 400" role="img" aria-label="Circular loop: food scraps to black-soldier-fly larvae to chicken feed to eggs and back">
+    <div className="loop-grid">
+      <svg
+        className="loop-svg"
+        viewBox="0 0 400 400"
+        role="img"
+        aria-label="Circular loop: food scraps to black-soldier-fly larvae to chicken feed to eggs and back"
+      >
         <defs>
           <marker id="arrowhead" markerWidth="7" markerHeight="7" refX="4" refY="3.5" orient="auto">
             <path d="M0,0 L7,3.5 L0,7 Z" fill="hsl(152 63% 35%)" />
           </marker>
         </defs>
+
+        {/* arcs draw in after their source node lights up */}
         {arcs.map((d, i) => (
-          <path
-            key={i}
+          <motion.path
+            key={`arc-${i}`}
             d={d}
-            className={`arc ${active > i + 1 || (i === 3 && active >= 4) ? 'lit' : ''}`}
             fill="none"
             stroke="hsl(152 63% 35%)"
             strokeWidth="3.5"
             strokeLinecap="round"
             markerEnd="url(#arrowhead)"
+            initial={reduce ? {pathLength: 1, opacity: 0.85} : {pathLength: 0, opacity: 0.85}}
+            animate={{pathLength: 1}}
+            transition={reduce ? {duration: 0} : {duration: 0.5, delay: nodeDelay(i) + 0.2, ease: 'easeInOut'}}
           />
         ))}
+
+        {/* traveling token — follows the same circular path, loops forever */}
+        {!reduce && (
+          <motion.circle
+            r="9"
+            fill="hsl(150 55% 52%)"
+            stroke="#fff"
+            strokeWidth="2"
+            initial={{opacity: 0}}
+            animate={{
+              opacity: 1,
+              offsetDistance: ['0%', '100%'],
+            }}
+            transition={{
+              opacity: {delay: 2.2, duration: 0.4},
+              offsetDistance: {delay: 2.2, duration: 6, ease: 'linear', repeat: Infinity},
+            }}
+            style={{
+              offsetPath: `path("M ${cx} ${cy - r} A ${r} ${r} 0 1 1 ${cx - 0.01} ${cy - r}")`,
+              offsetRotate: '0deg',
+            }}
+          />
+        )}
+
+        {/* nodes pop/scale in sequence */}
         {pts.map((p, i) => (
-          <g key={i} className={`node ${active >= i + 1 ? 'lit' : ''}`}>
-            <circle className="node-ring" cx={p.x} cy={p.y} r="46" fill="hsl(48 33% 98%)" stroke="hsl(152 63% 35%)" strokeWidth="3" />
+          <motion.g
+            key={`node-${i}`}
+            initial={reduce ? {opacity: 1, scale: 1} : {opacity: 0, scale: 0.4}}
+            animate={{opacity: 1, scale: 1}}
+            transition={reduce ? {duration: 0} : {duration: 0.45, delay: nodeDelay(i), ease: EASE_POP}}
+            style={{transformBox: 'fill-box', transformOrigin: 'center'}}
+          >
+            <circle cx={p.x} cy={p.y} r="46" fill="hsl(48 33% 98%)" stroke="hsl(152 63% 35%)" strokeWidth="3" />
             <circle cx={p.x} cy={p.y} r="38" fill="hsl(144 39% 92%)" />
             {labels[i].split('\n').map((ln, j, a) => (
               <text
@@ -231,349 +224,479 @@ function LoopDiagram() {
                 {ln}
               </text>
             ))}
-          </g>
+          </motion.g>
         ))}
       </svg>
 
       <ol className="loop-legend">
         {LOOP_NODES.map((n, i) => (
-          <li key={i} className={active >= i + 1 ? 'lit' : ''}>
+          <motion.li
+            key={i}
+            initial={reduce ? {opacity: 1, x: 0} : {opacity: 0, x: -16}}
+            animate={{opacity: 1, x: 0}}
+            transition={reduce ? {duration: 0} : {duration: 0.4, delay: nodeDelay(i)}}
+          >
             <span className="idx">{i + 1}</span>
-            <span>
+            <span className="legend-text">
               <span className="lt">{n.t}</span>
               <span className="ls">{n.s}</span>
             </span>
-          </li>
+          </motion.li>
         ))}
       </ol>
     </div>
   );
 }
 
-/* ------------------------------------------------------------------ */
-/* Main story                                                          */
-/* ------------------------------------------------------------------ */
-export function TifaStory() {
-  const [progress, setProgress] = useState(0);
-  const [notesOpen, setNotesOpen] = useState(false);
-  const [noteIdx, setNoteIdx] = useState(0);
+/* ================================================================== */
+/* Slides — each is a full-screen render. They animate in on enter.   */
+/* ================================================================== */
+function buildSlides(reduce: boolean): (() => JSX.Element)[] {
+  const M = motion.div;
 
-  // scroll progress bar
-  useEffect(() => {
-    const onScroll = () => {
-      const h = document.documentElement;
-      const max = h.scrollHeight - h.clientHeight;
-      setProgress(max > 0 ? (h.scrollTop / max) * 100 : 0);
-    };
-    onScroll();
-    window.addEventListener('scroll', onScroll, {passive: true});
-    return () => window.removeEventListener('scroll', onScroll);
+  return [
+    /* ---- 1 · HELLO ---- */
+    () => (
+      <div className="slide-photo">
+        <img className="slide-bg focus-center" src="/images/tifa/team-with-muslih.jpg" alt="The JASUTIM team, including Muhamad Muslih" />
+        <div className="slide-scrim scrim-hero" />
+        <M className="slide-fg bottom" variants={stagger} initial="hidden" animate="show">
+          <motion.p className="eyebrow" variants={riseItem}>
+            TIFA 2026 · Waste Circular Economy &amp; Climate Action
+          </motion.p>
+          <motion.h1 className="display xl" variants={riseItem}>
+            From Trash to Treasure
+          </motion.h1>
+          <motion.p className="sub" variants={riseItem}>
+            Waste management in Indonesia.
+          </motion.p>
+          <motion.p className="tiny" variants={riseItem}>
+            Muhamad Muslih — Chairman of Trustees, Yayasan JASUTIM
+          </motion.p>
+        </M>
+        <div className="tap-cue">
+          Tap or press <span className="key">→</span> to begin
+        </div>
+      </div>
+    ),
+
+    /* ---- 2 · THE PROBLEM ---- */
+    () => (
+      <div className="slide-photo">
+        <img className="slide-bg" src="/images/tifa/problem-bantargebang.jpg" alt="Bantar Gebang landfill in Bekasi" />
+        <div className="slide-scrim scrim-deep" />
+        <M className="slide-fg center" variants={stagger} initial="hidden" animate="show">
+          <motion.p className="line" variants={riseItem}>
+            This is Bantar Gebang.
+          </motion.p>
+          <motion.p className="line accent" variants={riseItem}>
+            Southeast Asia&rsquo;s largest landfill.
+          </motion.p>
+          <motion.p className="stat-band" variants={riseItem}>
+            &asymp;200 football fields wide · 50+ metres high
+          </motion.p>
+          <motion.p className="line small" variants={riseItem}>
+            And it sits in my city — Bekasi.
+          </motion.p>
+          <motion.p className="line small" variants={riseItem}>
+            Half of our home trash is food waste — almost no one recycles it.
+          </motion.p>
+        </M>
+        <p className="credit">Photo: 22Kartika / Wikimedia Commons · CC BY-SA 3.0</p>
+      </div>
+    ),
+
+    /* ---- 3 · THE BIG IDEA ---- */
+    () => (
+      <div className="slide-photo">
+        <img className="slide-bg" src="/images/tifa/weighing.jpg" alt="Weighing sorted waste at the bank" />
+        <div className="slide-scrim scrim-deep" />
+        <M className="slide-fg center" variants={stagger} initial="hidden" animate="show">
+          <motion.p className="line" variants={riseItem}>
+            What if trash worked like money?
+          </motion.p>
+          <motion.p className="line accent" variants={riseItem}>
+            Bank Sampah — a Waste Bank.
+          </motion.p>
+          <motion.div className="flow" variants={riseItem}>
+            <span className="flow-step">Bring sorted trash</span>
+            <span className="flow-arrow">&rarr;</span>
+            <span className="flow-step">We weigh it</span>
+            <span className="flow-arrow">&rarr;</span>
+            <span className="flow-step">Money into your savings</span>
+          </motion.div>
+          <motion.p className="line small" variants={riseItem}>
+            Trash becomes income.
+          </motion.p>
+        </M>
+      </div>
+    ),
+
+    /* ---- 4 · MEET JASUTIM ---- */
+    () => (
+      <div className="slide-photo">
+        <img className="slide-bg" src="/images/tifa/collection-volume.jpg" alt="Volume of waste collected by JASUTIM" />
+        <div className="slide-scrim scrim-bottom" />
+        <M className="slide-fg bottom" variants={stagger} initial="hidden" animate="show">
+          <motion.p className="eyebrow" variants={riseItem}>
+            Meet us
+          </motion.p>
+          <motion.p className="display md" variants={riseItem}>
+            JASUTIM — a community waste bank in Bekasi.
+          </motion.p>
+          <motion.div className="stats" variants={riseItem}>
+            <div className="stat">
+              <div className="num">
+                <CountUp prefix="&asymp;" to={40} reduce={reduce} />
+              </div>
+              <div className="lbl">tonnes recovered / year</div>
+            </div>
+            <div className="stat">
+              <div className="num">
+                <CountUp to={5} reduce={reduce} />
+              </div>
+              <div className="lbl">waste banks mentored</div>
+            </div>
+            <div className="stat">
+              <div className="num">
+                <CountUp to={200} suffix="+" reduce={reduce} />
+              </div>
+              <div className="lbl">families sorting at home</div>
+            </div>
+          </motion.div>
+        </M>
+      </div>
+    ),
+
+    /* ---- 5 · CIRCULAR ECONOMY NOW ---- */
+    () => (
+      <div className="slide-photo">
+        <img className="slide-bg" src="/images/tifa/eco-candle.jpg" alt="Scented candle made from used cooking oil" />
+        <div className="slide-scrim scrim-deep" />
+        <M className="slide-fg bottom" variants={stagger} initial="hidden" animate="show">
+          <motion.h2 className="display lg" variants={riseItem}>
+            Nothing is wasted.
+          </motion.h2>
+          <motion.div className="cards" variants={riseItem}>
+            <div className="card-loop">
+              <p className="tag">Loop A · Plastic</p>
+              <p className="card-body">
+                Plastic bottles &rarr; flakes &rarr; <strong>new products</strong>.
+              </p>
+            </div>
+            <div className="card-loop">
+              <p className="tag">Loop B · Cooking oil</p>
+              <p className="card-body">
+                Used cooking oil &rarr; scented candles, <strong>33&times; more valuable</strong>.
+              </p>
+            </div>
+          </motion.div>
+        </M>
+      </div>
+    ),
+
+    /* ---- 6 · NEXT PROJECT (in design) ---- */
+    () => (
+      <div className="slide-loop">
+        <div className="loop-wrap">
+          <M variants={stagger} initial="hidden" animate="show">
+            <motion.span className="badge-design" variants={riseItem}>
+              <span className="dot" />
+              Our next project — in design
+            </motion.span>
+            <motion.h2 className="loop-title" variants={riseItem}>
+              From food waste… to food.
+            </motion.h2>
+          </M>
+          <LoopDiagram reduce={reduce} />
+          <p className="loop-foot">
+            We&rsquo;re building this design now — see the full concept at <strong>lab.jasutim.org</strong>.
+          </p>
+        </div>
+      </div>
+    ),
+
+    /* ---- 7 · THE LESSON ---- */
+    () => (
+      <div className="slide-photo">
+        <img className="slide-bg" src="/images/tifa/community-women.jpg" alt="Women of the community sorting waste together" />
+        <div className="slide-scrim scrim-deep" />
+        <M className="slide-fg center" variants={stagger} initial="hidden" animate="show">
+          <motion.p className="display lg lesson-line" variants={riseItem}>
+            You don&rsquo;t need fancy technology. You need a community — and a place to start.
+          </motion.p>
+        </M>
+      </div>
+    ),
+
+    /* ---- 8 · WHAT YOU CAN DO ---- */
+    () => (
+      <div className="slide-photo">
+        <img className="slide-bg" src="/images/tifa/community-weighin.jpg" alt="Community weigh-in at the waste bank" />
+        <div className="slide-scrim scrim-bottom" />
+        <M className="slide-fg bottom" variants={stagger} initial="hidden" animate="show">
+          <motion.h2 className="display md" variants={riseItem}>
+            What you can do — starting tomorrow
+          </motion.h2>
+          <motion.div className="action-item" variants={riseItem}>
+            <span className="n">1</span>
+            <span className="t">
+              <b>Separate</b> your trash
+            </span>
+          </motion.div>
+          <motion.div className="action-item" variants={riseItem}>
+            <span className="n">2</span>
+            <span className="t">
+              <b>Refuse</b> single-use plastic
+            </span>
+          </motion.div>
+          <motion.div className="action-item" variants={riseItem}>
+            <span className="n">3</span>
+            <span className="t">
+              <b>Start small</b> — even a waste bank at school
+            </span>
+          </motion.div>
+        </M>
+      </div>
+    ),
+
+    /* ---- 9 · CLOSING ---- */
+    () => (
+      <div className="slide-closing">
+        <M variants={stagger} initial="hidden" animate="show">
+          <motion.h2 className="display lg closing-line" variants={riseItem}>
+            Trash is just treasure in the wrong place.
+          </motion.h2>
+          <motion.p className="thanks-thai" variants={riseItem} lang="th">
+            ขอบคุณครับ
+          </motion.p>
+          <motion.p className="thanks-rom" variants={riseItem}>
+            khòp khun kráp
+          </motion.p>
+          <motion.p className="thanks-en" variants={riseItem}>
+            Thank you, Thailand!
+          </motion.p>
+          <motion.div className="closing-foot" variants={riseItem}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/images/logo.png" alt="JASUTIM logo" />
+            <span className="url">jasutim.org</span>
+          </motion.div>
+        </M>
+      </div>
+    ),
+  ];
+}
+
+/* ================================================================== */
+/* Deck — controls current slide + navigation.                        */
+/* ================================================================== */
+export function TifaStory() {
+  const [current, setCurrent] = useState(0);
+  const [dir, setDir] = useState(1); // 1 = forward, -1 = back
+  const [notesOpen, setNotesOpen] = useState(false);
+  const reduceMotion = useReducedMotion() ?? false;
+
+  const go = useCallback((next: number, direction: number) => {
+    setDir(direction);
+    setCurrent((c) => {
+      const target = Math.max(0, Math.min(SLIDE_COUNT - 1, next));
+      return target === c ? c : target;
+    });
   }, []);
 
-  // keyboard: N toggles notes, arrows page through notes when open
-  const handleKey = useCallback(
-    (e: KeyboardEvent) => {
+  const advance = useCallback(() => go(currentRef.current + 1, 1), [go]);
+  const back = useCallback(() => go(currentRef.current - 1, -1), [go]);
+
+  // keep a live ref so handlers don't go stale
+  const currentRef = useRef(current);
+  useEffect(() => {
+    currentRef.current = current;
+  }, [current]);
+
+  // ---- keyboard ----
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
       if (e.key === 'n' || e.key === 'N') {
         setNotesOpen((v) => !v);
-      } else if (notesOpen && (e.key === 'ArrowRight' || e.key === ' ')) {
-        e.preventDefault();
-        setNoteIdx((i) => Math.min(NOTES.length - 1, i + 1));
-      } else if (notesOpen && e.key === 'ArrowLeft') {
-        setNoteIdx((i) => Math.max(0, i - 1));
-      } else if (e.key === 'Escape') {
-        setNotesOpen(false);
+        return;
       }
+      if (e.key === 'Escape') {
+        setNotesOpen(false);
+        return;
+      }
+      if (notesOpen) return; // when notes are open, don't navigate slides
+      if (e.key === ' ' || e.key === 'Enter' || e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+        e.preventDefault();
+        advance();
+      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'Backspace') {
+        e.preventDefault();
+        back();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [advance, back, notesOpen]);
+
+  // ---- lock body scroll (deck, not scroll) ----
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, []);
+
+  // ---- click / tap to advance (ignore interactive bits) ----
+  const onStageClick = useCallback(
+    (e: React.MouseEvent) => {
+      if (notesOpen) return;
+      const t = e.target as HTMLElement;
+      if (t.closest('[data-no-advance]')) return;
+      // tap on left third = back, otherwise advance (mobile-friendly)
+      const x = e.clientX;
+      if (x < window.innerWidth * 0.22) back();
+      else advance();
     },
-    [notesOpen]
+    [advance, back, notesOpen]
   );
 
-  useEffect(() => {
-    window.addEventListener('keydown', handleKey);
-    return () => window.removeEventListener('keydown', handleKey);
-  }, [handleKey]);
+  // ---- swipe (touch) ----
+  const touch = useRef<{x: number; y: number} | null>(null);
+  const onTouchStart = (e: React.TouchEvent) => {
+    const t = e.touches[0];
+    touch.current = {x: t.clientX, y: t.clientY};
+  };
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (!touch.current || notesOpen) return;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - touch.current.x;
+    const dy = t.clientY - touch.current.y;
+    touch.current = null;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
+      if (dx < 0) advance();
+      else back();
+    }
+  };
+
+  const slides = buildSlides(reduceMotion);
+
+  const slideVariants: Variants = {
+    enter: (d: number) => ({
+      opacity: 0,
+      scale: reduceMotion ? 1 : 1.04,
+      x: reduceMotion ? 0 : d > 0 ? 40 : -40,
+    }),
+    center: {opacity: 1, scale: 1, x: 0},
+    exit: (d: number) => ({
+      opacity: 0,
+      scale: reduceMotion ? 1 : 0.985,
+      x: reduceMotion ? 0 : d > 0 ? -40 : 40,
+    }),
+  };
 
   return (
-    <div className="tifa-root">
-      <div className="tifa-progress" style={{width: `${progress}%`}} />
-
-      <div className="tifa-brand">
+    <div
+      className="deck"
+      onClick={onStageClick}
+      onTouchStart={onTouchStart}
+      onTouchEnd={onTouchEnd}
+    >
+      {/* fixed brand */}
+      <div className="tifa-brand" data-no-advance>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/images/logo.png" alt="JASUTIM" />
         <span>JASUTIM</span>
       </div>
 
-      {/* ---------- SCENE 1 — HELLO ---------- */}
-      <section className="scene" aria-label="Hello">
-        <div className="scene-track" style={{minHeight: '120vh'}}>
-          <div className="scene-sticky">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className="scene-bg" src="/images/tifa/team-with-muslih.jpg" alt="The JASUTIM team, including Muhamad Muslih" />
-            <div className="scene-scrim scrim-bottom" />
-            <div className="scene-fg">
-              <Step>
-                <p className="eyebrow">TIFA 2026 · Waste Circular Economy &amp; Climate Action</p>
-                <h1 className="display xl">From Trash to Treasure</h1>
-                <p className="sub">Waste management in Indonesia.</p>
-                <p className="tiny">Muhamad Muslih — Chairman of Trustees, Yayasan JASUTIM</p>
-              </Step>
-            </div>
-            <div className="scroll-cue">
-              Scroll
-              <span className="arrow">&darr;</span>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* slide stage */}
+      <AnimatePresence mode="wait" custom={dir}>
+        <motion.section
+          key={current}
+          className="slide"
+          custom={dir}
+          variants={slideVariants}
+          initial="enter"
+          animate="center"
+          exit="exit"
+          transition={{duration: reduceMotion ? 0.001 : 0.55, ease: EASE_DECK}}
+          aria-label={NOTES[current].scene}
+        >
+          {slides[current]()}
+        </motion.section>
+      </AnimatePresence>
 
-      {/* ---------- SCENE 2 — THE PROBLEM ---------- */}
-      <section className="scene" aria-label="The problem: Bantar Gebang">
-        <div className="scene-sticky">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img className="scene-bg" src="/images/tifa/problem-bantargebang.jpg" alt="Bantar Gebang landfill in Bekasi" />
-          <div className="scene-scrim scrim-full" />
-          <p className="credit">Photo: 22Kartika / Wikimedia Commons · CC BY-SA 3.0</p>
+      {/* slide indicator (dots + count) */}
+      <div className="deck-indicator" data-no-advance>
+        <div className="dots">
+          {Array.from({length: SLIDE_COUNT}).map((_, i) => (
+            <button
+              key={i}
+              type="button"
+              className={`dot-btn ${i === current ? 'on' : ''}`}
+              aria-label={`Go to slide ${i + 1}`}
+              onClick={(e) => {
+                e.stopPropagation();
+                go(i, i > current ? 1 : -1);
+              }}
+            />
+          ))}
         </div>
-        <div className="scene-track" style={{marginTop: '-100vh'}}>
-          <div style={{height: '60vh'}} />
-          <ProblemStep className="line">This is Bantar Gebang.</ProblemStep>
-          <ProblemStep className="line">Southeast Asia&rsquo;s largest landfill.</ProblemStep>
-          <ProblemStep className="stat-band">&asymp;200 football fields wide · 50+ metres high</ProblemStep>
-          <ProblemStep className="line small">And it sits in my city — Bekasi.</ProblemStep>
-          <ProblemStep className="line small">Half of our home trash is food waste — almost no one recycles it.</ProblemStep>
-          <div style={{height: '20vh'}} />
-        </div>
-      </section>
+        <span className="count">
+          {current + 1} / {SLIDE_COUNT}
+        </span>
+      </div>
 
-      {/* ---------- SCENE 3 — THE BIG IDEA ---------- */}
-      <section className="scene" aria-label="The big idea: waste bank">
-        <div className="scene-sticky">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img className="scene-bg" src="/images/tifa/weighing.jpg" alt="Weighing sorted waste at the bank" />
-          <div className="scene-scrim scrim-full" />
-        </div>
-        <div className="scene-track" style={{marginTop: '-100vh'}}>
-          <div style={{height: '50vh'}} />
-          <ProblemStep className="line">What if trash worked like money?</ProblemStep>
-          <ProblemStepFlow />
-          <ProblemStep className="line small">Trash becomes income.</ProblemStep>
-          <div style={{height: '20vh'}} />
-        </div>
-      </section>
+      {/* prev / next affordances (desktop) */}
+      <button
+        type="button"
+        className="nav-edge left"
+        data-no-advance
+        aria-label="Previous slide"
+        onClick={(e) => {
+          e.stopPropagation();
+          back();
+        }}
+      >
+        &lsaquo;
+      </button>
+      <button
+        type="button"
+        className="nav-edge right"
+        data-no-advance
+        aria-label="Next slide"
+        onClick={(e) => {
+          e.stopPropagation();
+          advance();
+        }}
+      >
+        &rsaquo;
+      </button>
 
-      {/* ---------- SCENE 4 — MEET JASUTIM ---------- */}
-      <section className="scene" aria-label="Meet JASUTIM">
-        <div className="scene-track" style={{minHeight: '130vh'}}>
-          <div className="scene-sticky">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className="scene-bg" src="/images/tifa/collection-volume.jpg" alt="Volume of waste collected by JASUTIM" />
-            <div className="scene-scrim scrim-bottom" />
-            <div className="scene-fg">
-              <Step>
-                <p className="eyebrow">Meet us</p>
-                <p className="display md">JASUTIM — a community waste bank in Bekasi.</p>
-                <div className="stats">
-                  <div className="stat">
-                    <div className="num">
-                      <CountUp prefix="&asymp;" to={40} />
-                    </div>
-                    <div className="lbl">tonnes recovered / year</div>
-                  </div>
-                  <div className="stat">
-                    <div className="num">
-                      <CountUp to={5} />
-                    </div>
-                    <div className="lbl">waste banks mentored</div>
-                  </div>
-                  <div className="stat">
-                    <div className="num">
-                      <CountUp to={200} suffix="+" />
-                    </div>
-                    <div className="lbl">families sorting at home</div>
-                  </div>
-                </div>
-              </Step>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* notes hint */}
+      <div className="notes-hint" data-no-advance>
+        Press N — notes
+      </div>
 
-      {/* ---------- SCENE 5 — CIRCULAR ECONOMY NOW ---------- */}
-      <section className="scene" aria-label="Circular economy now">
-        <div className="scene-track" style={{minHeight: '130vh'}}>
-          <div className="scene-sticky">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className="scene-bg" src="/images/tifa/eco-candle.jpg" alt="Scented candle made from used cooking oil" />
-            <div className="scene-scrim scrim-full" />
-            <div className="scene-fg">
-              <Step>
-                <h2 className="display lg">Nothing is wasted.</h2>
-                <div className="cards">
-                  <div className="card-loop">
-                    <p className="tag">Loop A · Plastic</p>
-                    <p className="body">
-                      Plastic bottles &rarr; flakes &rarr; <strong>new products</strong>.
-                    </p>
-                  </div>
-                  <div className="card-loop">
-                    <p className="tag">Loop B · Cooking oil</p>
-                    <p className="body">
-                      Used cooking oil &rarr; scented candles, <strong>33&times; more valuable</strong>.
-                    </p>
-                  </div>
-                </div>
-              </Step>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ---------- SCENE 6 — NEXT PROJECT (in design) ---------- */}
-      <section className="scene-loop" aria-label="Next project in design: food waste to food">
-        <div className="loop-wrap">
-          <Step>
-            <span className="badge-design">
-              <span className="dot" />
-              Our next project — in design
-            </span>
-            <h2 className="loop-title">From food waste… to food.</h2>
-          </Step>
-          <LoopDiagram />
-          <p className="loop-foot">
-            We&rsquo;re building this design now — see the full concept at <strong>lab.jasutim.org</strong>.
-          </p>
-        </div>
-      </section>
-
-      {/* ---------- SCENE 7 — THE LESSON ---------- */}
-      <section className="scene lesson" aria-label="The lesson">
-        <div className="scene-track" style={{minHeight: '110vh'}}>
-          <div className="scene-sticky">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className="scene-bg" src="/images/tifa/community-women.jpg" alt="Women of the community sorting waste together" />
-            <div className="scene-scrim scrim-full" />
-            <div className="scene-fg center">
-              <Step>
-                <p className="display lg">
-                  You don&rsquo;t need fancy technology. You need a community — and a place to start.
-                </p>
-              </Step>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ---------- SCENE 8 — WHAT YOU CAN DO ---------- */}
-      <section className="scene" aria-label="What you can do">
-        <div className="scene-track" style={{minHeight: '130vh'}}>
-          <div className="scene-sticky">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className="scene-bg" src="/images/tifa/community-weighin.jpg" alt="Community weigh-in at the waste bank" />
-            <div className="scene-scrim scrim-bottom" />
-            <div className="scene-fg">
-              <Step>
-                <h2 className="display md">What you can do — starting tomorrow</h2>
-                <div className="actions">
-                  <div className="action-item">
-                    <span className="n">1</span>
-                    <span className="t">
-                      <b>Separate</b> your trash
-                    </span>
-                  </div>
-                  <div className="action-item">
-                    <span className="n">2</span>
-                    <span className="t">
-                      <b>Refuse</b> single-use plastic
-                    </span>
-                  </div>
-                  <div className="action-item">
-                    <span className="n">3</span>
-                    <span className="t">
-                      <b>Start small</b> — even a waste bank at school
-                    </span>
-                  </div>
-                </div>
-              </Step>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ---------- CLOSING BAND ---------- */}
-      <section className="closing" aria-label="Closing">
-        <Step>
-          <h2 className="display lg">Trash is just treasure in the wrong place.</h2>
-          <p className="thanks">
-            Terima kasih <span className="id">·</span> Thank you
-          </p>
-          <div className="closing-foot">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/images/logo.png" alt="JASUTIM logo" />
-            <span className="url">jasutim.org</span>
-          </div>
-        </Step>
-      </section>
-
-      {/* ---------- Presenter notes ---------- */}
-      <div className="notes-hint">Press N — notes</div>
+      {/* presenter notes — shows CURRENT slide's notes */}
       {notesOpen && (
-        <div className="notes-overlay" onClick={() => setNotesOpen(false)}>
+        <div
+          className="notes-overlay"
+          data-no-advance
+          onClick={(e) => {
+            e.stopPropagation();
+            setNotesOpen(false);
+          }}
+        >
           <div className="notes-card" onClick={(e) => e.stopPropagation()}>
-            <p className="eyebrow">Presenter notes · {noteIdx + 1} / {NOTES.length}</p>
-            <h3>{NOTES[noteIdx].scene}</h3>
-            <p>{NOTES[noteIdx].text}</p>
-            <p className="nav">← → to move · N or Esc to close</p>
+            <p className="eyebrow">
+              Presenter notes · slide {current + 1} / {SLIDE_COUNT}
+            </p>
+            <h3>{NOTES[current].scene}</h3>
+            <p>{NOTES[current].text}</p>
+            <p className="nav">N or Esc to close</p>
           </div>
         </div>
       )}
-    </div>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/* Helpers for the sticky-overlay scenes (2 & 3): each step is a       */
-/* full-viewport block that pins its content centered over the image. */
-/* ------------------------------------------------------------------ */
-function ProblemStep({children, className = ''}: {children: React.ReactNode; className?: string}) {
-  return (
-    <div
-      style={{
-        height: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        padding: 'clamp(24px, 6vw, 72px)',
-      }}
-    >
-      <Step>
-        <p className={className} style={{margin: 0}}>
-          {children}
-        </p>
-      </Step>
-    </div>
-  );
-}
-
-function ProblemStepFlow() {
-  return (
-    <div
-      style={{
-        height: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        padding: 'clamp(24px, 6vw, 72px)',
-      }}
-    >
-      <Step>
-        <p className="line small" style={{margin: 0}}>
-          Bank Sampah — a Waste Bank.
-        </p>
-        <div className="flow">
-          <span className="flow-step">Bring sorted trash</span>
-          <span className="flow-arrow">&rarr;</span>
-          <span className="flow-step">We weigh it</span>
-          <span className="flow-arrow">&rarr;</span>
-          <span className="flow-step">Money into your savings</span>
-        </div>
-      </Step>
     </div>
   );
 }

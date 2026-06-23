@@ -1,8 +1,12 @@
 /* ============================================================
-   TIFA scrollytelling — standalone (outside [locale]).
-   Brand tokens mirrored from site globals.css:
+   TIFA talk deck — standalone (outside [locale]).
+   v1.1: slide-deck navigation (one full-screen slide at a time),
+   much larger projector-friendly type, animated Scene 6 loop,
+   Thai closing line.
+   Brand tokens mirror site globals.css:
    emerald hsl(152 63% 35%), off-white hsl(48 33% 98%),
-   near-black hsl(160 14% 11%). Display = Fraunces, body = Inter.
+   near-black hsl(160 14% 11%). Display = Fraunces, body = Inter,
+   Thai = Noto Sans Thai.
    ============================================================ */
 
 :root {
@@ -12,6 +16,7 @@
   --tifa-emerald-deep: hsl(152 60% 24%);
   --tifa-emerald-bright: hsl(150 55% 52%);
   --tifa-muted: hsl(160 14% 40%);
+  --pad: clamp(28px, 6vw, 96px);
 }
 
 * {
@@ -22,150 +27,128 @@ html,
 body.tifa-body {
   margin: 0;
   padding: 0;
+  height: 100%;
 }
 
 body.tifa-body {
-  background: var(--tifa-bg);
+  background: #07140f;
   color: var(--tifa-ink);
   font-family: var(--font-body), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  overflow-x: hidden;
-}
-
-.tifa-root {
-  position: relative;
-}
-
-/* ---------- Progress bar ---------- */
-.tifa-progress {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 3px;
-  width: 0;
-  background: var(--tifa-emerald);
-  z-index: 90;
-  transition: width 0.1s linear;
-}
-
-/* ---------- Fixed logo + note hint ---------- */
-.tifa-brand {
-  position: fixed;
-  top: 18px;
-  left: 20px;
-  z-index: 80;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  opacity: 0.92;
-  pointer-events: none;
-}
-.tifa-brand img {
-  height: 34px;
-  width: auto;
-  filter: drop-shadow(0 1px 6px rgba(0, 0, 0, 0.35));
-}
-.tifa-brand span {
-  font-family: var(--font-display), serif;
-  font-weight: 600;
-  font-size: 0.95rem;
-  letter-spacing: 0.02em;
-  color: #fff;
-  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
-}
-
-/* ---------- Scene scaffold ---------- */
-.scene {
-  position: relative;
-}
-
-/* sticky full-bleed visual layer */
-.scene-sticky {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  width: 100%;
   overflow: hidden;
 }
-.scene-bg {
+
+/* ============================================================
+   Deck shell — fills the viewport, holds one slide at a time.
+   ============================================================ */
+.deck {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100dvh;
+  overflow: hidden;
+  background: #07140f;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* photo slides: full-bleed image + scrim + foreground content */
+.slide-photo {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+.slide-bg {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
   z-index: 0;
 }
-.scene-scrim {
+/* swappable focal point for soft / portrait sources */
+.slide-bg.focus-center {
+  object-position: 50% 42%;
+}
+
+.slide-scrim {
   position: absolute;
   inset: 0;
   z-index: 1;
 }
+/* hero treatment — stronger, cleaner gradient hides WhatsApp-grade softness */
+.scrim-hero {
+  background:
+    radial-gradient(120% 90% at 50% 18%, rgba(7, 20, 15, 0.28) 0%, rgba(7, 20, 15, 0) 55%),
+    linear-gradient(
+      to top,
+      rgba(5, 14, 11, 0.96) 0%,
+      rgba(5, 14, 11, 0.74) 34%,
+      rgba(5, 14, 11, 0.4) 62%,
+      rgba(5, 14, 11, 0.34) 100%
+    );
+}
 .scrim-bottom {
   background: linear-gradient(
     to top,
-    rgba(8, 20, 16, 0.92) 0%,
-    rgba(8, 20, 16, 0.55) 38%,
-    rgba(8, 20, 16, 0.18) 70%,
-    rgba(8, 20, 16, 0.1) 100%
+    rgba(6, 16, 13, 0.94) 0%,
+    rgba(6, 16, 13, 0.6) 40%,
+    rgba(6, 16, 13, 0.2) 72%,
+    rgba(6, 16, 13, 0.12) 100%
   );
 }
-.scrim-full {
-  background: linear-gradient(
-    to top,
-    rgba(6, 16, 13, 0.9) 0%,
-    rgba(6, 16, 13, 0.62) 50%,
-    rgba(6, 16, 13, 0.72) 100%
-  );
+.scrim-deep {
+  background:
+    radial-gradient(110% 80% at 50% 50%, rgba(5, 14, 11, 0.35) 0%, rgba(5, 14, 11, 0) 60%),
+    linear-gradient(
+      to top,
+      rgba(5, 14, 11, 0.92) 0%,
+      rgba(5, 14, 11, 0.7) 48%,
+      rgba(5, 14, 11, 0.78) 100%
+    );
 }
 
-/* the foreground content sits in a taller track to drive scroll */
-.scene-track {
-  position: relative;
-  z-index: 2;
-}
-
-/* foreground content pinned over the sticky image */
-.scene-fg {
+/* foreground content layer */
+.slide-fg {
   position: absolute;
   inset: 0;
   z-index: 3;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-  padding: clamp(24px, 6vw, 72px);
-  padding-bottom: clamp(48px, 9vh, 96px);
+  padding: var(--pad);
   pointer-events: none;
 }
-.scene-fg.center {
+.slide-fg.bottom {
+  justify-content: flex-end;
+  padding-bottom: clamp(64px, 12vh, 132px);
+}
+.slide-fg.center {
   justify-content: center;
   align-items: flex-start;
 }
 
-/* ---------- Reveal steps ---------- */
-.step {
-  opacity: 0;
-  transform: translateY(28px);
-  transition: opacity 0.7s ease, transform 0.7s ease;
-  will-change: opacity, transform;
-}
-.step.in {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* ---------- Typography ---------- */
+/* ============================================================
+   Typography — BIG for a projected room. clamp(vmin/vw + vh).
+   ============================================================ */
 .eyebrow {
   font-family: var(--font-body), sans-serif;
   text-transform: uppercase;
-  letter-spacing: 0.18em;
-  font-size: clamp(0.62rem, 1.4vw, 0.78rem);
-  font-weight: 600;
+  letter-spacing: 0.16em;
+  font-size: clamp(0.8rem, 1.7vw, 1.15rem);
+  font-weight: 700;
   color: var(--tifa-emerald-bright);
-  margin: 0 0 14px;
-}
-.eyebrow.on-light {
-  color: var(--tifa-emerald);
+  margin: 0 0 18px;
 }
 
 .display {
@@ -177,212 +160,264 @@ body.tifa-body {
   color: #fff;
 }
 .display.xl {
-  font-size: clamp(2.6rem, 9vw, 6rem);
+  font-size: clamp(3.4rem, 11vw, 8.5rem);
+  line-height: 0.92;
 }
 .display.lg {
-  font-size: clamp(2rem, 6.5vw, 4.2rem);
+  font-size: clamp(2.6rem, 7.5vw, 6rem);
 }
 .display.md {
-  font-size: clamp(1.6rem, 4.8vw, 3rem);
+  font-size: clamp(2.1rem, 6vw, 4.4rem);
 }
 
 .sub {
-  font-size: clamp(1rem, 2.6vw, 1.45rem);
+  font-size: clamp(1.35rem, 3.4vw, 2.3rem);
   font-weight: 400;
-  color: rgba(255, 255, 255, 0.86);
-  margin: 16px 0 0;
-  max-width: 36ch;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 22px 0 0;
+  max-width: 30ch;
 }
 .tiny {
-  font-size: clamp(0.78rem, 1.8vw, 0.95rem);
-  color: rgba(255, 255, 255, 0.72);
-  margin: 22px 0 0;
+  font-size: clamp(1rem, 2.2vw, 1.4rem);
+  color: rgba(255, 255, 255, 0.78);
+  margin: 28px 0 0;
 }
 
-.text-light {
-  color: #fff;
-}
-
-/* step lines for the problem / idea scenes */
+/* big editorial statement lines (problem / idea slides) */
 .line {
   font-family: var(--font-display), serif;
   font-weight: 500;
-  line-height: 1.05;
-  font-size: clamp(1.9rem, 6vw, 4rem);
+  line-height: 1.04;
+  font-size: clamp(2.6rem, 7vw, 5.5rem);
   color: #fff;
-  margin: 0 0 0.6em;
-  max-width: 18ch;
+  margin: 0 0 0.42em;
+  max-width: 20ch;
+}
+.line.accent {
+  color: #fff;
 }
 .line.small {
-  font-size: clamp(1.4rem, 4vw, 2.6rem);
-  max-width: 26ch;
+  font-size: clamp(1.7rem, 4.4vw, 3.4rem);
+  max-width: 28ch;
+  font-weight: 500;
 }
 .stat-band {
   font-family: var(--font-display), serif;
   font-weight: 700;
-  font-size: clamp(1.5rem, 5vw, 3.2rem);
+  font-size: clamp(2rem, 5.6vw, 4.2rem);
   color: var(--tifa-emerald-bright);
-  line-height: 1.05;
-  margin: 0 0 0.6em;
+  line-height: 1.02;
+  margin: 0 0 0.42em;
+  max-width: 22ch;
 }
 
-/* ---------- Scroll cue ---------- */
-.scroll-cue {
+/* ---------- Hero tap cue ---------- */
+.tap-cue {
   position: absolute;
   left: 50%;
-  bottom: 30px;
+  bottom: clamp(20px, 4vh, 40px);
   transform: translateX(-50%);
   z-index: 4;
   color: rgba(255, 255, 255, 0.85);
-  font-size: 0.8rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+  font-size: clamp(0.85rem, 1.8vw, 1.05rem);
+  letter-spacing: 0.06em;
   text-align: center;
   pointer-events: none;
-  animation: cue 2.2s ease-in-out infinite;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: cue 2.4s ease-in-out infinite;
 }
-.scroll-cue .arrow {
-  display: block;
-  font-size: 1.3rem;
-  margin-top: 6px;
+.tap-cue .key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 6px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 6px;
+  font-size: 0.95em;
 }
 @keyframes cue {
   0%,
   100% {
-    transform: translate(-50%, 0);
     opacity: 0.55;
+    transform: translate(-50%, 0);
   }
   50% {
-    transform: translate(-50%, 8px);
     opacity: 1;
+    transform: translate(-50%, -5px);
   }
 }
 
-/* ---------- Mini flow (Scene 3) ---------- */
+/* ---------- Mini flow (slide 3) ---------- */
 .flow {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 10px 14px;
-  margin-top: 26px;
+  gap: 12px 16px;
+  margin: 8px 0 28px;
 }
 .flow-step {
   font-family: var(--font-body), sans-serif;
   font-weight: 600;
-  font-size: clamp(0.95rem, 2.4vw, 1.35rem);
+  font-size: clamp(1.15rem, 2.8vw, 1.9rem);
   color: #fff;
-  background: rgba(20, 120, 80, 0.34);
-  border: 1px solid rgba(120, 220, 170, 0.4);
+  background: rgba(20, 120, 80, 0.4);
+  border: 1px solid rgba(120, 220, 170, 0.45);
   border-radius: 999px;
-  padding: 10px 18px;
+  padding: 12px 24px;
   backdrop-filter: blur(2px);
 }
 .flow-arrow {
   color: var(--tifa-emerald-bright);
-  font-size: 1.4rem;
+  font-size: clamp(1.6rem, 3.2vw, 2.4rem);
   font-weight: 700;
 }
 
-/* ---------- Stats (Scene 4) ---------- */
+/* ---------- Stats (slide 4) — HUGE numbers ---------- */
 .stats {
   display: flex;
   flex-wrap: wrap;
-  gap: clamp(22px, 5vw, 60px);
-  margin-top: 30px;
+  gap: clamp(28px, 6vw, 84px);
+  margin-top: 36px;
 }
 .stat {
-  min-width: 120px;
+  min-width: 150px;
 }
 .stat .num {
   font-family: var(--font-display), serif;
   font-weight: 900;
-  font-size: clamp(2.6rem, 8vw, 5rem);
-  line-height: 1;
+  font-size: clamp(4rem, 11vw, 8rem);
+  line-height: 0.95;
   color: var(--tifa-emerald-bright);
 }
 .stat .lbl {
-  font-size: clamp(0.82rem, 1.9vw, 1rem);
-  color: rgba(255, 255, 255, 0.88);
-  margin-top: 8px;
-  max-width: 16ch;
+  font-size: clamp(1.1rem, 2.4vw, 1.6rem);
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.92);
+  margin-top: 12px;
+  max-width: 15ch;
 }
 
-/* ---------- Cards (Scene 5) ---------- */
+/* ---------- Cards (slide 5) ---------- */
 .cards {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 18px;
-  margin-top: 28px;
-  max-width: 760px;
+  gap: 22px;
+  margin-top: 32px;
+  max-width: 920px;
 }
-@media (min-width: 720px) {
+@media (min-width: 760px) {
   .cards {
     grid-template-columns: 1fr 1fr;
   }
 }
 .card-loop {
-  background: rgba(10, 28, 22, 0.62);
-  border: 1px solid rgba(120, 220, 170, 0.35);
-  border-radius: 18px;
-  padding: 22px 24px;
+  background: rgba(10, 28, 22, 0.66);
+  border: 1px solid rgba(120, 220, 170, 0.38);
+  border-radius: 20px;
+  padding: 26px 30px;
   backdrop-filter: blur(3px);
 }
 .card-loop .tag {
-  font-size: 0.72rem;
-  letter-spacing: 0.16em;
+  font-size: clamp(0.85rem, 1.7vw, 1.05rem);
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--tifa-emerald-bright);
   font-weight: 700;
-  margin: 0 0 10px;
+  margin: 0 0 12px;
 }
-.card-loop .body {
+.card-loop .card-body {
   font-family: var(--font-display), serif;
-  font-size: clamp(1.1rem, 2.8vw, 1.55rem);
+  font-size: clamp(1.5rem, 3.4vw, 2.4rem);
   font-weight: 500;
-  line-height: 1.15;
+  line-height: 1.16;
   color: #fff;
   margin: 0;
 }
-.card-loop .body strong {
+.card-loop .card-body strong {
+  color: var(--tifa-emerald-bright);
+  font-weight: 700;
+}
+
+/* ---------- Lesson (slide 7) ---------- */
+.lesson-line {
+  max-width: 20ch;
+}
+
+/* ---------- Actions (slide 8) ---------- */
+.action-item {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  color: #fff;
+  margin-top: 20px;
+}
+.action-item .n {
+  flex: 0 0 auto;
+  width: clamp(48px, 7vw, 64px);
+  height: clamp(48px, 7vw, 64px);
+  border-radius: 50%;
+  border: 2px solid var(--tifa-emerald-bright);
+  color: var(--tifa-emerald-bright);
+  font-family: var(--font-display), serif;
+  font-weight: 700;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.action-item .t {
+  font-family: var(--font-display), serif;
+  font-size: clamp(1.7rem, 4.2vw, 3rem);
+  font-weight: 500;
+  line-height: 1.05;
+}
+.action-item .t b {
   color: var(--tifa-emerald-bright);
   font-weight: 700;
 }
 
 /* ============================================================
-   Scene 6 — custom CSS/SVG circular loop diagram (light scene)
+   Slide 6 — circular loop diagram (light slide). More breathing room.
    ============================================================ */
-.scene-loop {
+.slide-loop {
+  position: relative;
+  width: 100%;
+  height: 100%;
   background: var(--tifa-bg);
   color: var(--tifa-ink);
-  min-height: 100vh;
   display: flex;
   align-items: center;
-  padding: clamp(40px, 8vh, 96px) clamp(24px, 6vw, 72px);
+  padding: clamp(40px, 6vh, 88px) var(--pad);
+  overflow-y: auto;
 }
 .loop-wrap {
   width: 100%;
-  max-width: 1040px;
+  max-width: 1120px;
   margin: 0 auto;
 }
 .badge-design {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   font-family: var(--font-body), sans-serif;
-  font-size: 0.72rem;
+  font-size: clamp(0.82rem, 1.7vw, 1.05rem);
   font-weight: 700;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--tifa-emerald-deep);
   background: hsl(144 39% 92%);
   border: 1px solid hsl(144 30% 78%);
   border-radius: 999px;
-  padding: 7px 14px;
-  margin-bottom: 18px;
+  padding: 9px 18px;
+  margin-bottom: 22px;
 }
 .badge-design .dot {
-  width: 8px;
-  height: 8px;
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
   background: var(--tifa-emerald);
   animation: pulse 1.8s ease-in-out infinite;
@@ -401,97 +436,83 @@ body.tifa-body {
 .loop-title {
   font-family: var(--font-display), serif;
   font-weight: 600;
-  font-size: clamp(2rem, 6vw, 4rem);
-  line-height: 1;
+  font-size: clamp(2.4rem, 6.5vw, 5rem);
+  line-height: 0.98;
   letter-spacing: -0.015em;
   color: var(--tifa-ink);
-  margin: 0 0 30px;
+  margin: 0 0 clamp(28px, 4vh, 48px);
 }
 .loop-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 30px;
+  gap: clamp(28px, 5vw, 64px);
   align-items: center;
 }
-@media (min-width: 880px) {
+@media (min-width: 920px) {
   .loop-grid {
-    grid-template-columns: 1.05fr 0.95fr;
+    grid-template-columns: 1fr 1fr;
   }
 }
 .loop-svg {
   width: 100%;
+  max-width: 460px;
   height: auto;
   display: block;
+  margin: 0 auto;
 }
-/* node states inside the svg */
-.loop-svg .node {
-  opacity: 0.28;
-  transition: opacity 0.5s ease, transform 0.5s ease;
-  transform-box: fill-box;
-  transform-origin: center;
-}
-.loop-svg .node.lit {
-  opacity: 1;
-}
-.loop-svg .node.lit .node-ring {
-  filter: drop-shadow(0 4px 14px rgba(20, 140, 90, 0.4));
-}
-.loop-svg .arc {
-  opacity: 0.18;
-  transition: opacity 0.6s ease, stroke-dashoffset 0.9s ease;
-}
-.loop-svg .arc.lit {
-  opacity: 0.85;
-}
-/* the captioned legend on the right */
+
+/* legend — fixed the cramped label/description bug: now block-level
+   with proper vertical gaps and line-height. */
 .loop-legend {
   list-style: none;
   margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: clamp(18px, 2.6vh, 28px);
 }
 .loop-legend li {
   display: flex;
   align-items: flex-start;
-  gap: 14px;
-  opacity: 0.4;
-  transform: translateX(-8px);
-  transition: opacity 0.5s ease, transform 0.5s ease;
-}
-.loop-legend li.lit {
-  opacity: 1;
-  transform: translateX(0);
+  gap: 18px;
 }
 .loop-legend .idx {
   flex: 0 0 auto;
-  width: 30px;
-  height: 30px;
+  width: clamp(38px, 5vw, 48px);
+  height: clamp(38px, 5vw, 48px);
   border-radius: 50%;
   background: var(--tifa-emerald);
   color: #fff;
   font-weight: 700;
-  font-size: 0.9rem;
+  font-size: clamp(1.1rem, 2.2vw, 1.4rem);
   display: flex;
   align-items: center;
   justify-content: center;
 }
+.loop-legend .legend-text {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 2px;
+}
 .loop-legend .lt {
+  display: block;
   font-family: var(--font-display), serif;
   font-weight: 600;
-  font-size: clamp(1.05rem, 2.6vw, 1.4rem);
-  line-height: 1.1;
+  font-size: clamp(1.35rem, 3vw, 1.95rem);
+  line-height: 1.12;
   color: var(--tifa-ink);
 }
 .loop-legend .ls {
-  font-size: 0.88rem;
+  display: block;
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  line-height: 1.3;
   color: var(--tifa-muted);
-  margin-top: 2px;
 }
 .loop-foot {
-  margin-top: 30px;
-  font-size: clamp(0.9rem, 2vw, 1.05rem);
+  margin-top: clamp(28px, 4vh, 44px);
+  font-size: clamp(1.1rem, 2.3vw, 1.5rem);
+  line-height: 1.4;
   color: var(--tifa-muted);
 }
 .loop-foot strong {
@@ -499,53 +520,13 @@ body.tifa-body {
   font-weight: 700;
 }
 
-/* ---------- Scene 7 — the lesson ---------- */
-.lesson .display {
-  max-width: 22ch;
-}
-
 /* ============================================================
-   Scene 8 — actions + emerald closing band
+   Slide 9 — emerald closing band + Thai thank-you.
    ============================================================ */
-.actions {
-  margin-top: 30px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  max-width: 620px;
-}
-.action-item {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  color: #fff;
-}
-.action-item .n {
-  flex: 0 0 auto;
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  border: 2px solid var(--tifa-emerald-bright);
-  color: var(--tifa-emerald-bright);
-  font-family: var(--font-display), serif;
-  font-weight: 700;
-  font-size: 1.3rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.action-item .t {
-  font-family: var(--font-display), serif;
-  font-size: clamp(1.2rem, 3.2vw, 1.9rem);
-  font-weight: 500;
-}
-.action-item .t b {
-  color: var(--tifa-emerald-bright);
-  font-weight: 700;
-}
-
-.closing {
-  min-height: 100vh;
+.slide-closing {
+  position: relative;
+  width: 100%;
+  height: 100%;
   background: linear-gradient(160deg, var(--tifa-emerald-deep), var(--tifa-emerald));
   color: #fff;
   display: flex;
@@ -553,69 +534,189 @@ body.tifa-body {
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: clamp(32px, 8vw, 80px);
+  padding: var(--pad);
+  overflow-y: auto;
 }
-.closing .display {
-  max-width: 16ch;
+.closing-line {
+  max-width: 18ch;
+  margin: 0 auto;
 }
-.closing .thanks {
+.thanks-thai {
+  font-family: var(--font-thai), 'Noto Sans Thai', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: clamp(3rem, 9vw, 6.5rem);
+  line-height: 1.1;
+  margin: clamp(28px, 5vh, 56px) 0 0;
+  color: #fff;
+}
+.thanks-rom {
+  font-family: var(--font-body), sans-serif;
+  font-size: clamp(1.1rem, 2.6vw, 1.7rem);
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.82);
+  margin: 10px 0 0;
+}
+.thanks-en {
   font-family: var(--font-display), serif;
-  font-size: clamp(1.3rem, 4vw, 2.2rem);
   font-weight: 500;
-  margin: 30px 0 0;
+  font-size: clamp(1.4rem, 3.6vw, 2.4rem);
   color: rgba(255, 255, 255, 0.95);
-}
-.closing .thanks .id {
-  opacity: 0.8;
+  margin: 22px 0 0;
 }
 .closing-foot {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-top: 40px;
+  justify-content: center;
+  gap: 14px;
+  margin-top: clamp(32px, 5vh, 52px);
 }
 .closing-foot img {
-  height: 46px;
+  height: clamp(48px, 7vw, 64px);
   width: auto;
 }
 .closing-foot .url {
   font-family: var(--font-body), sans-serif;
   font-weight: 600;
   letter-spacing: 0.02em;
-  font-size: 1.05rem;
+  font-size: clamp(1.15rem, 2.4vw, 1.5rem);
   color: #fff;
 }
 
-/* ---------- Photo credit ---------- */
+/* ============================================================
+   Fixed chrome — brand, indicator, nav edges, notes.
+   ============================================================ */
+.tifa-brand {
+  position: fixed;
+  top: clamp(16px, 3vh, 26px);
+  left: clamp(18px, 3vw, 30px);
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  opacity: 0.94;
+  pointer-events: none;
+}
+.tifa-brand img {
+  height: clamp(34px, 4.5vw, 44px);
+  width: auto;
+  filter: drop-shadow(0 1px 6px rgba(0, 0, 0, 0.4));
+}
+.tifa-brand span {
+  font-family: var(--font-display), serif;
+  font-weight: 600;
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  letter-spacing: 0.02em;
+  color: #fff;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.55);
+}
+/* on the light slides (6) keep the brand readable */
+.slide-loop ~ .tifa-brand span,
+.slide-closing ~ .tifa-brand span {
+  color: #fff;
+}
+
+/* slide indicator */
+.deck-indicator {
+  position: fixed;
+  bottom: clamp(16px, 3vh, 26px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.dots {
+  display: flex;
+  gap: 9px;
+}
+.dot-btn {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: 0;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  transition: background 0.3s, transform 0.3s;
+}
+.dot-btn.on {
+  background: var(--tifa-emerald-bright);
+  transform: scale(1.35);
+}
+.deck-indicator .count {
+  font-family: var(--font-body), sans-serif;
+  font-size: clamp(0.78rem, 1.6vw, 0.95rem);
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.85);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+}
+
+/* prev/next edge buttons (subtle, desktop helpers) */
+.nav-edge {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 65;
+  width: clamp(44px, 5vw, 60px);
+  height: clamp(44px, 5vw, 60px);
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(0, 0, 0, 0.22);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.35;
+  transition: opacity 0.25s;
+  backdrop-filter: blur(2px);
+}
+.nav-edge:hover {
+  opacity: 0.9;
+}
+.nav-edge.left {
+  left: clamp(12px, 2vw, 24px);
+}
+.nav-edge.right {
+  right: clamp(12px, 2vw, 24px);
+}
+@media (max-width: 640px) {
+  .nav-edge {
+    display: none; /* on phones, use tap/swipe */
+  }
+}
+
+/* photo credit */
 .credit {
   position: absolute;
-  right: 10px;
-  bottom: 8px;
+  right: 12px;
+  bottom: 10px;
   z-index: 4;
-  font-size: 0.62rem;
+  font-size: clamp(0.62rem, 1.3vw, 0.78rem);
   letter-spacing: 0.02em;
-  color: rgba(255, 255, 255, 0.62);
-  background: rgba(0, 0, 0, 0.32);
-  padding: 3px 8px;
+  color: rgba(255, 255, 255, 0.66);
+  background: rgba(0, 0, 0, 0.34);
+  padding: 4px 9px;
   border-radius: 6px;
   pointer-events: none;
 }
 
-/* ============================================================
-   Presenter notes overlay (press N)
-   ============================================================ */
+/* ---------- Presenter notes overlay (press N) ---------- */
 .notes-hint {
   position: fixed;
-  bottom: 14px;
-  right: 14px;
-  z-index: 80;
-  font-size: 0.68rem;
+  bottom: clamp(14px, 2.6vh, 22px);
+  right: clamp(14px, 2.6vw, 22px);
+  z-index: 70;
+  font-size: clamp(0.66rem, 1.4vw, 0.78rem);
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.7);
-  background: rgba(0, 0, 0, 0.35);
+  color: rgba(255, 255, 255, 0.72);
+  background: rgba(0, 0, 0, 0.36);
   border: 1px solid rgba(255, 255, 255, 0.18);
-  padding: 5px 10px;
+  padding: 6px 11px;
   border-radius: 8px;
   pointer-events: none;
 }
@@ -623,46 +724,43 @@ body.tifa-body {
   position: fixed;
   inset: 0;
   z-index: 100;
-  background: rgba(6, 16, 13, 0.94);
+  background: rgba(6, 16, 13, 0.95);
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: clamp(24px, 6vw, 64px);
+  cursor: pointer;
 }
 .notes-card {
-  max-width: 720px;
+  max-width: 780px;
   width: 100%;
+  cursor: default;
 }
 .notes-card .eyebrow {
   color: var(--tifa-emerald-bright);
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 .notes-card h3 {
   font-family: var(--font-display), serif;
-  font-size: clamp(1.4rem, 4vw, 2.2rem);
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
   font-weight: 600;
-  margin: 0 0 18px;
+  margin: 0 0 20px;
 }
 .notes-card p {
-  font-size: clamp(1rem, 2.4vw, 1.25rem);
+  font-size: clamp(1.15rem, 2.6vw, 1.5rem);
   line-height: 1.55;
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.92);
 }
 .notes-card .nav {
-  margin-top: 26px;
-  font-size: 0.85rem;
+  margin-top: 28px;
+  font-size: clamp(0.85rem, 1.8vw, 1rem);
   color: rgba(255, 255, 255, 0.6);
   letter-spacing: 0.08em;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .step {
-    transition: none;
-    opacity: 1;
-    transform: none;
-  }
-  .scroll-cue,
+  .tap-cue,
   .badge-design .dot {
     animation: none;
   }
