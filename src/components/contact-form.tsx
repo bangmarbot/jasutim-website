@@ -8,17 +8,20 @@ import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
 
+const WORKER_URL = "https://jasutim-contact.muhamad-muslih91.workers.dev";
+
 const formSchema = z.object({
   name: z.string().min(2),
   organization: z.string().min(2),
   email: z.string().email(),
   message: z.string().min(10),
+  botcheck: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
 export function ContactForm({locale}: {locale: "id" | "en"}) {
-  const [done, setDone] = useState(false);
+  const [status, setStatus] = useState<"idle" | "done" | "error">("idle");
   const {
     register,
     handleSubmit,
@@ -26,14 +29,30 @@ export function ContactForm({locale}: {locale: "id" | "en"}) {
     reset,
   } = useForm<FormValues>({resolver: zodResolver(formSchema)});
 
-  const onSubmit = async () => {
-    await new Promise((resolve) => setTimeout(resolve, 600));
-    setDone(true);
-    reset();
+  const onSubmit = async (values: FormValues) => {
+    setStatus("idle");
+    try {
+      const res = await fetch(WORKER_URL, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(values),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setStatus("done");
+        reset();
+      } else {
+        setStatus("error");
+      }
+    } catch {
+      setStatus("error");
+    }
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 rounded-3xl border bg-background p-6 shadow-sm">
+      {/* Honeypot — hidden from humans, catches bots */}
+      <input type="text" tabIndex={-1} autoComplete="off" aria-hidden="true" className="hidden" {...register("botcheck")} />
       <div className="grid gap-4 md:grid-cols-2">
         <div>
           <Input {...register("name")} placeholder={locale === "id" ? "Nama lengkap" : "Full name"} />
@@ -55,11 +74,18 @@ export function ContactForm({locale}: {locale: "id" | "en"}) {
       <Button type="submit" disabled={isSubmitting} className="w-full">
         {isSubmitting ? (locale === "id" ? "Mengirim..." : "Sending...") : locale === "id" ? "Kirim pesan" : "Send message"}
       </Button>
-      {done && (
+      {status === "done" && (
         <p className="text-sm text-emerald-600">
           {locale === "id"
-            ? "Demo form berhasil dikirim. Sambungkan ke email/CRM lewat env saat production."
-            : "Demo form submitted successfully. Connect it to email/CRM via env in production."}
+            ? "Terima kasih! Pesan Anda sudah terkirim. Kami akan segera menghubungi Anda."
+            : "Thank you! Your message has been sent. We'll get back to you soon."}
+        </p>
+      )}
+      {status === "error" && (
+        <p className="text-sm text-red-600">
+          {locale === "id"
+            ? "Maaf, pesan gagal terkirim. Coba lagi atau email langsung ke info@jasutim.org."
+            : "Sorry, the message failed to send. Please try again or email info@jasutim.org directly."}
         </p>
       )}
     </form>

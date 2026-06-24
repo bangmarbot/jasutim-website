@@ -1,0 +1,13 @@
+{
+  "name": "jasutim-contact-worker",
+  "private": true,
+  "scripts": {
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "mimetext": "^3.0.24"
+  },
+  "devDependencies": {
+    "wrangler": "^3.90.0"
+  }
+}

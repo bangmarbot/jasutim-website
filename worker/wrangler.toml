@@ -1,0 +1,10 @@
+name = "jasutim-contact"
+main = "src/index.js"
+compatibility_date = "2024-11-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Cloudflare Email Routing send binding.
+# Can only send to a VERIFIED destination address (yayasanjasutim@gmail.com).
+[[send_email]]
+name = "SEB"
+destination_address = "yayasanjasutim@gmail.com"
